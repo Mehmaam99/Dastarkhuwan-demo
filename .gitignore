@@ -1,0 +1,22 @@
+# Dependencies & build artifacts
+node_modules/
+dist/
+dist-ssr/
+*.local
+*.tsbuildinfo
+
+# Deployment & local caches
+.vercel/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Phase 1 root branding deliverables (not required by web app build)
+/*.png
+/*.pdf
