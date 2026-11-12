@@ -1779,6 +1779,147 @@ export default function DastarkhwanApp() {
             transform: none;
           }
         }
+
+        /* ---------------- Premium visual refinement ---------------- */
+        .dk-root {
+          --dk-gold: #D8B65A;
+          --dk-gold-soft: #F1DFA7;
+          background: #071D16;
+          letter-spacing: -0.006em;
+        }
+        .dk-root header {
+          position: relative;
+          z-index: 50;
+        }
+        .dk-root .dk-utility-bar {
+          background: linear-gradient(90deg, #061710, #102D22 52%, #061710);
+          border-bottom: 1px solid rgba(216,182,90,.22);
+        }
+        .dk-root .dk-sticky-nav {
+          background: rgba(5, 25, 18, .94);
+          border-bottom: 1px solid rgba(216,182,90,.2);
+          box-shadow: 0 12px 36px rgba(0,0,0,.16);
+          backdrop-filter: blur(18px);
+        }
+        .dk-root #home {
+          min-height: min(820px, calc(100svh - 72px));
+          padding-top: clamp(5rem, 10vw, 9rem);
+          padding-bottom: clamp(5rem, 10vw, 9rem);
+          background-color: #061710;
+        }
+        .dk-root #home > img {
+          object-position: 58% 48%;
+          filter: saturate(.88) contrast(1.08);
+          transform: scale(1.015);
+        }
+        .dk-root #home > div[aria-hidden="true"]:nth-of-type(1) {
+          background: linear-gradient(90deg, #061710 0%, rgba(6,23,16,.96) 27%, rgba(6,23,16,.76) 52%, rgba(6,23,16,.08) 100%);
+        }
+        .dk-root #home > div[aria-hidden="true"]:nth-of-type(2) {
+          background: linear-gradient(0deg, rgba(4,18,12,.82), transparent 36%, rgba(4,18,12,.28));
+        }
+        .dk-root #home h1 {
+          max-width: 11ch;
+          font-size: clamp(2.8rem, 5.6vw, 5.15rem);
+          line-height: 1.04;
+          letter-spacing: -.035em;
+          text-wrap: balance;
+        }
+        .dk-root #home p {
+          max-width: 34rem;
+          color: rgba(248,246,237,.86);
+          line-height: 1.85;
+        }
+        .dk-root .dk-btn-gold,
+        .dk-root .dk-btn-glass {
+          min-height: 52px;
+          padding: 14px 22px;
+          border-radius: 3px;
+          letter-spacing: .09em;
+          transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+        }
+        .dk-root .dk-btn-gold {
+          background: linear-gradient(135deg, #F0DFA8, #D8B65A 52%, #B88D35);
+          color: #10251B;
+          box-shadow: 0 8px 24px rgba(184,141,53,.16);
+        }
+        .dk-root .dk-btn-gold:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 13px 30px rgba(184,141,53,.25);
+        }
+        .dk-root .dk-btn-glass {
+          border-color: rgba(241,223,167,.5);
+          background: rgba(255,255,255,.055);
+          backdrop-filter: blur(10px);
+        }
+        .dk-root .dk-btn-glass:hover {
+          background: rgba(255,255,255,.12);
+          transform: translateY(-2px);
+        }
+        .dk-root section[id] {
+          scroll-margin-top: 92px;
+        }
+        .dk-root #ethos,
+        .dk-root #menu {
+          position: relative;
+        }
+        .dk-root #ethos {
+          background: linear-gradient(135deg, #F7F2E7, #EEE5D2);
+        }
+        .dk-root #ethos img,
+        .dk-root #ambience img {
+          transition: transform .8s cubic-bezier(.2,.75,.25,1), filter .5s ease;
+        }
+        .dk-root #ethos .overflow-hidden:hover img,
+        .dk-root #ambience .overflow-hidden:hover img {
+          transform: scale(1.035);
+        }
+        .dk-root #menu {
+          background: linear-gradient(180deg, #09291E 0%, #061D15 100%);
+        }
+        .dk-root #reservations,
+        .dk-root #concierge {
+          background-image: radial-gradient(ellipse at 85% 15%, rgba(216,182,90,.09), transparent 36%);
+        }
+        .dk-root input,
+        .dk-root select,
+        .dk-root textarea {
+          border-radius: 3px;
+        }
+        .dk-root a:focus-visible,
+        .dk-root button:focus-visible {
+          outline-offset: 4px;
+        }
+        @media (max-width: 767px) {
+          .dk-root #home {
+            min-height: 690px;
+            padding-top: 5.5rem;
+            padding-bottom: 5.5rem;
+          }
+          .dk-root #home > img {
+            width: 100%;
+            opacity: .56;
+            object-position: 58% center;
+          }
+          .dk-root #home > div[aria-hidden="true"]:nth-of-type(1) {
+            background: linear-gradient(90deg, rgba(4,18,12,.88), rgba(4,18,12,.54)), linear-gradient(0deg, #041812 0%, transparent 75%);
+          }
+          .dk-root #home h1 {
+            margin-left: auto;
+            margin-right: auto;
+            font-size: clamp(2.65rem, 11vw, 4rem);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .dk-root *,
+          .dk-root *::before,
+          .dk-root *::after {
+            scroll-behavior: auto !important;
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: .01ms !important;
+          }
+        }
       `}</style>
 
       {/* Accessible Skip Link */}
