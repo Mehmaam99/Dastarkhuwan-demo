@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { restaurantConfig as CONTACT } from "./config/restaurant";
+
 import {
   ArrowRight,
   ArrowUp,
@@ -95,15 +97,6 @@ interface InquiryConfirmation {
   name: string;
   email: string;
 }
-
-const CONTACT = {
-  address: "Clifton Block 4, Near Marine Drive, Karachi, Pakistan",
-  phone: "+92 21 3XXXXXXX",
-  whatsapp: "+92 300 XXXXXXX",
-  email: "concierge@dastarkhwan.pk",
-  hoursPrimary: "Tue – Sun: 12:30 PM – 1:00 AM",
-  hoursValet: "Complimentary Valet & Armed Escort Lobby • Clifton Promenade",
-} as const;
 
 const MENU_CATEGORIES: { id: MenuCategoryId; label: string; subLabel: string }[] = [
   { id: "all", label: "All Dishes", subLabel: "12 Selections" },
@@ -248,17 +241,17 @@ const MENU_ITEMS: MenuItem[] = [
     imageAlt: "Fragrant golden lamb pulao steamed with whole spices and toasted nuts",
   },
   {
-    id: "karachi-sindhi-biryani",
+    id: "sindhi-mutton-biryani",
     category: "biryani",
     categoryLabel: "Biryani & Rice",
-    title: "Karachi Sindhi Biryani",
+    title: "Sindhi Mutton Biryani",
     tagline: "Bold, tangy & aromatic",
     pricePkr: 4100,
     spiceLevel: 3,
     spiceLabel: "Spicy",
     servingSize: "Sealed Pot • Serves 2",
     description:
-      "Karachi's iconic celebration rice layered with tangy dried plums, fresh garden mint, golden potatoes, and spiced tender mutton.",
+      "A beloved regional celebration rice layered with tangy dried plums, fresh garden mint, golden potatoes, and spiced tender mutton.",
     ingredients: ["Tangy plums", "Garden mint", "Golden potatoes", "Roasted cumin raita"],
     image: "/images/dish-sindhi-biryani.jpg",
     imageAlt: "Vibrant spiced Pakistani biryani with herbs, saffron rice, and tender meat",
@@ -394,10 +387,10 @@ const IMPRESSIONS: ImpressionItem[] = [
   {
     id: "imp-1",
     quote:
-      "An extraordinary dining experience! The flavours, candlelit ambience and heartfelt hospitality were simply outstanding. Karachi finally has a fine-dining table worthy of its traditions.",
+      "An extraordinary dining experience! The flavours, candlelit ambience and heartfelt hospitality brought a fresh sense of occasion to our family celebration.",
     author: "Zainab & Tariq Mahmood",
     initials: "ZT",
-    city: "Clifton, Karachi",
+    city: "Sample guest review",
     occasion: "Anniversary Dinner",
   },
   {
@@ -415,7 +408,7 @@ const IMPRESSIONS: ImpressionItem[] = [
       "Every detail speaks to quiet elegance—emerald velvet seating, warm candlelight, freshly ground spices, and Saffron Shahi Tukray that remained memorable for days.",
     author: "Mehreen Raza",
     initials: "MR",
-    city: "Defence Phase VI, Karachi",
+    city: "Sample guest review",
     occasion: "Family Celebration",
   },
 ];
@@ -590,7 +583,7 @@ function DastarkhwanLogo({
 
       {showWordmark && (
         <span className="dk-logo-text">
-          <span className="dk-wordmark">DASTARKHWAN</span>
+          <span className="dk-wordmark">{CONTACT.name}</span>
           {showTagline && (
             <span className="dk-tagline">
               <span className="dk-tagline-rule" aria-hidden="true" />
@@ -1059,7 +1052,7 @@ export default function DastarkhwanApp() {
     }
 
     setResLiveSummary("");
-    const randomCode = `DK-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    const randomCode = `DEMO-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     setConfirmedReservation({
       reference: randomCode,
       fullName: resForm.fullName.trim(),
@@ -1175,7 +1168,7 @@ export default function DastarkhwanApp() {
     }
 
     setInqLiveSummary("");
-    const refCode = `DK-INQ-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+    const refCode = `DEMO-INQ-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
     setInqConfirmation({
       reference: refCode,
       type: inqForm.type,
@@ -1811,12 +1804,14 @@ export default function DastarkhwanApp() {
             </div>
             <div className="flex items-center gap-4">
               <a
-                href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`}
-                className="inline-flex items-center gap-1.5 text-[#F8F6ED] transition hover:text-[#D4AF37]"
-              >
-                <Phone size={13} strokeWidth={1.6} className="text-[#D4AF37]" aria-hidden="true" />
-                <span>{CONTACT.phone}</span>
-              </a>
+                {CONTACT.phone ? (
+                <a href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`} className="inline-flex items-center gap-1.5 text-[#F8F6ED] transition hover:text-[#D4AF37]">
+                  <Phone size={13} strokeWidth={1.6} className="text-[#D4AF37]" aria-hidden="true" />
+                  <span>{CONTACT.phone}</span>
+                </a>
+              ) : (
+                <span className="text-xs text-[#F8F6ED]/70">Restaurant contact details available on request</span>
+              )}
             </div>
           </div>
         </div>
@@ -1919,8 +1914,8 @@ export default function DastarkhwanApp() {
 
           <div className="space-y-2 border-t border-[#D4AF37]/20 pt-5 text-xs text-[#F8F6ED]/75">
             <p className="font-medium text-[#D4AF37]">{CONTACT.address}</p>
-            <p>Concierge: {CONTACT.phone}</p>
-            <p>WhatsApp: {CONTACT.whatsapp}</p>
+            <p>Concierge: {CONTACT.phone || "Add restaurant phone number"}</p>
+            <p>WhatsApp: {CONTACT.whatsapp || "Add restaurant WhatsApp number before launch"}</p>
           </div>
         </div>
       </dialog>
@@ -1978,8 +1973,8 @@ export default function DastarkhwanApp() {
               </h1>
 
               <p className="mx-auto mt-6 max-w-lg text-base font-normal leading-relaxed text-[#EFEBD9]/95 lg:mx-0 sm:text-lg">
-                Discover the richness of Pakistani cuisine, thoughtfully reimagined for unforgettable moments in Clifton,
-                Karachi.
+                Discover the richness of Pakistani cuisine, thoughtfully reimagined for unforgettable moments wherever you are.
+                
               </p>
 
               <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row lg:justify-start sm:justify-center">
@@ -2420,7 +2415,7 @@ export default function DastarkhwanApp() {
                         Signature Service
                       </span>
                       <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#DFCFA6]">
-                        Clifton, Karachi
+                        Your City, Pakistan
                       </span>
                     </div>
                   </div>
@@ -2542,6 +2537,7 @@ export default function DastarkhwanApp() {
                 </h2>
                 <span className="hidden h-px w-14 bg-gradient-to-l from-transparent to-[#C6962C] sm:inline-block" aria-hidden="true" />
               </div>
+              <p className="mt-2 text-xs text-[#F8F6ED]/65">Illustrative sample reviews for this demo — replace with verified customer feedback before launch.</p>
             </div>
 
             <div className="mt-10 flex items-center justify-between gap-4 sm:gap-8">
@@ -2635,8 +2631,7 @@ export default function DastarkhwanApp() {
                 Reserve Your Dastarkhwan
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#4A4A46] sm:text-base">
-                Request your preferred dining salon, evening seating, and dietary considerations. All reservations are
-                personally confirmed by our Clifton maître d&apos;.
+                Request your preferred dining salon, evening seating, and dietary considerations. Submit a sample reservation request. In a live restaurant website, requests are sent to the restaurant for confirmation.
               </p>
             </div>
 
@@ -2910,8 +2905,7 @@ export default function DastarkhwanApp() {
                   Concierge &amp; Location
                 </h2>
                 <p className="mt-4 text-sm leading-relaxed text-[#E5DEC9]/85">
-                  Situated minutes from Karachi&apos;s Marine Drive waterfront, with private covered valet portico and
-                  wheelchair-accessible step-free garden entry.
+                  Find us at our restaurant location. Add your address, accessibility details, and directions before launching this website for a restaurant.
                 </p>
 
                 <dl className="mt-8 space-y-5 border-t border-[#D4AF37]/20 pt-8 text-sm">
@@ -2932,9 +2926,9 @@ export default function DastarkhwanApp() {
                         Direct Concierge Desk
                       </dt>
                       <dd className="mt-1">
-                        <a href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`} className="hover:text-[#D4AF37]">
-                          {CONTACT.phone}
-                        </a>
+                        {CONTACT.phone ? (
+                          <a href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`} className="hover:text-[#D4AF37]">{CONTACT.phone}</a>
+                        ) : "Add restaurant phone number before launch"}
                       </dd>
                     </div>
                   </div>
@@ -2950,7 +2944,7 @@ export default function DastarkhwanApp() {
                       <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
                         WhatsApp Reservations
                       </dt>
-                      <dd className="mt-1 text-[#F8F6ED]">{CONTACT.whatsapp}</dd>
+                      <dd className="mt-1 text-[#F8F6ED]">{CONTACT.whatsapp ? <a href={`https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="hover:text-[#D4AF37]">{CONTACT.whatsapp}</a> : "Add restaurant WhatsApp number before launch"}</dd>
                     </div>
                   </div>
 
@@ -2961,9 +2955,9 @@ export default function DastarkhwanApp() {
                         Private Events &amp; Press
                       </dt>
                       <dd className="mt-1">
-                        <a href={`mailto:${CONTACT.email}`} className="hover:text-[#D4AF37]">
-                          {CONTACT.email}
-                        </a>
+                        {CONTACT.email ? (
+                          <a href={`mailto:${CONTACT.email}`} className="hover:text-[#D4AF37]">{CONTACT.email}</a>
+                        ) : "Add restaurant email before launch"}
                       </dd>
                     </div>
                   </div>
@@ -2975,7 +2969,7 @@ export default function DastarkhwanApp() {
                         Service &amp; Valet Hours
                       </dt>
                       <dd className="mt-1 text-[#F8F6ED]">{CONTACT.hoursPrimary}</dd>
-                      <dd className="mt-0.5 text-xs text-[#F8F6ED]/70">{CONTACT.hoursValet}</dd>
+                      <dd className="mt-0.5 text-xs text-[#F8F6ED]/70">{CONTACT.hoursValet || "Add optional service details in restaurant configuration"}</dd>
                     </div>
                   </div>
                 </dl>
@@ -2983,12 +2977,11 @@ export default function DastarkhwanApp() {
                 {/* Architectural Map & Pre-Opening Site Placement Frame */}
                 <div className="mt-7 rounded-lg border border-[#D4AF37]/40 bg-[#051F17]/90 p-4">
                   <div className="flex items-center justify-between gap-2 text-[11px] uppercase tracking-[0.16em] text-[#E8CE82]">
-                    <span>Clifton Block 4 • Marine Drive Corridor</span>
-                    <span>24.8138° N, 67.0299° E</span>
+                    <span>Restaurant location • Your City, Pakistan</span>
+                    <span>Location to be configured</span>
                   </div>
                   <p className="mt-1.5 text-xs leading-relaxed text-[#F8F6ED]/80">
-                    Official venue lines, concierge phone desk, and live Google Maps embed activate upon physical
-                    property handover.
+                    Add the restaurant's verified address and Google Maps link in src/config/restaurant.ts before publishing for a client.
                   </p>
                 </div>
               </div>
@@ -3012,11 +3005,10 @@ export default function DastarkhwanApp() {
                       <CheckCircle2 size={20} strokeWidth={1.6} className="mt-0.5 shrink-0 text-[#D4AF37]" aria-hidden="true" />
                       <div>
                         <p className="font-semibold text-[#D4AF37]">
-                          Dispatch Received — Reference {inqConfirmation.reference}
+                          Demo inquiry preview — Reference {inqConfirmation.reference}
                         </p>
                         <p className="mt-1 text-xs text-[#F8F6ED]/85">
-                          Thank you, {inqConfirmation.name}. Our {inqConfirmation.type.toLowerCase()} director will reply
-                          to {inqConfirmation.email} within one business day.
+                          Thank you, {inqConfirmation.name}. This is a demo only; no inquiry has been sent. Connect an email or CRM destination before launch.
                         </p>
                       </div>
                     </div>
@@ -3165,8 +3157,7 @@ export default function DastarkhwanApp() {
             <div className="md:col-span-5">
               <DastarkhwanLogo size="md" />
               <p className="mt-5 max-w-sm text-xs leading-relaxed text-[#F8F6ED]/80">
-                A flagship sanctuary for Modern Pakistani Luxury dining in Clifton, Karachi—uniting ancestral slow
-                charcoal dum cookery with serene minimal design.
+                A premium Pakistani dining experience—uniting regional culinary heritage, thoughtful hospitality, and an elegant setting.
               </p>
               <div className="mt-6 flex items-center gap-4">
                 <a
@@ -3202,7 +3193,7 @@ export default function DastarkhwanApp() {
               </nav>
             </div>
 
-            {/* Hours & Clifton Contact */}
+            {/* Restaurant hours & contact */}
             <div className="md:col-span-4">
               <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
                 Hours &amp; Address
@@ -3211,13 +3202,13 @@ export default function DastarkhwanApp() {
                 <p>{CONTACT.address}</p>
                 <p>{CONTACT.hoursPrimary}</p>
                 <p>Monday: Closed for Weekly Kitchen Prep</p>
-                <p className="pt-1 text-[#D4AF37]">{CONTACT.phone} • {CONTACT.email}</p>
+                <p className="pt-1 text-[#D4AF37]">{CONTACT.phone || "Add phone"} • {CONTACT.email || "Add email"}</p>
               </div>
             </div>
           </div>
 
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[#C6962C]/25 pt-8 text-xs text-[#E5DEC9]/75 sm:flex-row">
-            <p>© {new Date().getFullYear()} DASTARKHWAN Hospitality Karachi. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} DASTARKHWAN. All rights reserved.</p>
             <div className="flex flex-wrap items-center gap-4">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#C6962C]/45 px-4 py-1.5 text-[11px] font-medium tracking-[0.1em] text-[#D4AF37]">
                 <span>Designed &amp; Engineered for Matrix Studio Portfolio</span>
@@ -3348,7 +3339,7 @@ export default function DastarkhwanApp() {
                 <CheckCircle2 size={26} strokeWidth={1.6} className="shrink-0 text-[#D4AF37]" aria-hidden="true" />
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
-                    Table Request Registered
+                    Reservation Preview
                   </p>
                   <h2 id="reservation-confirm-title" className="dk-font-display text-2xl font-semibold text-[#F8F6ED]">
                     Reference #{confirmedReservation.reference}
@@ -3398,8 +3389,7 @@ export default function DastarkhwanApp() {
             </dl>
 
             <div className="mt-6 border border-[#D4AF37]/30 bg-[#0B3D2E] p-4 text-xs leading-relaxed text-[#F8F6ED]/85">
-              Our Clifton hospitality concierge will dispatch your formal table confirmation via WhatsApp within 15
-              minutes.
+              Demo preview only — no reservation has been sent. Connect the restaurant's booking system or WhatsApp number in src/config/restaurant.ts before launch.
             </div>
 
             <div className="mt-6">
