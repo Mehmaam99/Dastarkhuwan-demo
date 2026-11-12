@@ -20,3 +20,39 @@ create policy "public reads active categories" on public.menu_categories for sel
 create policy "public reads available items" on public.menu_items for select using(is_available);
 create policy "public reads active tables" on public.restaurant_tables for select using(is_active);
 -- No public policies for orders, QR tokens or order line tables. Server-only service role accesses these.
+
+create or replace function public.create_dine_in_order(p_slug text,p_token text,p_key text,p_items jsonb,p_instructions text default '')
+returns jsonb language plpgsql security definer set search_path=public
+as $$
+declare r restaurants%rowtype; t restaurant_tables%rowtype; q table_qr_tokens%rowtype; x jsonb; dish menu_items%rowtype; qty int; subtotal int:=0; new_order orders%rowtype; line_id uuid;
+begin
+ select * into r from restaurants where slug=p_slug and is_active=true;
+ if not found then raise exception 'Restaurant is unavailable'; end if;
+ select * into q from table_qr_tokens where token_hash=encode(digest(p_token,'sha256'),'hex') and restaurant_id=r.id and is_active=true;
+ if not found then raise exception 'Table QR code is invalid or inactive'; end if;
+ select * into t from restaurant_tables where id=q.table_id and restaurant_id=r.id and is_active=true;
+ if not found then raise exception 'Table is inactive'; end if;
+ if jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)<1 or jsonb_array_length(p_items)>30 then raise exception 'Invalid order items'; end if;
+ select * into new_order from orders where restaurant_id=r.id and idempotency_key=p_key;
+ if found then return jsonb_build_object('id',new_order.id,'orderNumber',new_order.order_number,'status',new_order.status,'total',new_order.total_pkr,'duplicate',true); end if;
+ for x in select * from jsonb_array_elements(p_items) loop
+  qty:=(x->>'quantity')::int;
+  if qty<1 or qty>50 then raise exception 'Invalid quantity'; end if;
+  select * into dish from menu_items where id=(x->>'itemId')::uuid and restaurant_id=r.id and is_available=true;
+  if not found then raise exception 'A selected dish is unavailable'; end if;
+  subtotal:=subtotal+(dish.price_pkr*qty);
+ end loop;
+ insert into orders(restaurant_id,table_id,order_type,status,special_instructions,subtotal_pkr,total_pkr,idempotency_key)
+ values(r.id,t.id,'dine_in','pending',left(coalesce(p_instructions,''),500),subtotal,subtotal,p_key)
+ returning * into new_order;
+ for x in select * from jsonb_array_elements(p_items) loop
+  qty:=(x->>'quantity')::int;
+  select * into dish from menu_items where id=(x->>'itemId')::uuid and restaurant_id=r.id and is_available=true;
+  insert into order_items(order_id,menu_item_id,item_name,unit_price_pkr,quantity,special_instructions)
+  values(new_order.id,dish.id,dish.name,dish.price_pkr,qty,left(coalesce(x->>'instructions',''),500));
+ end loop;
+ insert into order_status_history(order_id,new_status) values(new_order.id,'pending');
+ return jsonb_build_object('id',new_order.id,'orderNumber',new_order.order_number,'status',new_order.status,'total',new_order.total_pkr,'duplicate',false);
+end; $$;
+revoke all on function public.create_dine_in_order(text,text,text,jsonb,text) from public,anon,authenticated;
+grant execute on function public.create_dine_in_order(text,text,text,jsonb,text) to service_role;
