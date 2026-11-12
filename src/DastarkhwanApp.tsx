@@ -1804,12 +1804,14 @@ export default function DastarkhwanApp() {
             </div>
             <div className="flex items-center gap-4">
               <a
-                href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`}
-                className="inline-flex items-center gap-1.5 text-[#F8F6ED] transition hover:text-[#D4AF37]"
-              >
-                <Phone size={13} strokeWidth={1.6} className="text-[#D4AF37]" aria-hidden="true" />
-                <span>{CONTACT.phone || "Add restaurant phone number"}</span>
-              </a>
+                {CONTACT.phone ? (
+                <a href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`} className="inline-flex items-center gap-1.5 text-[#F8F6ED] transition hover:text-[#D4AF37]">
+                  <Phone size={13} strokeWidth={1.6} className="text-[#D4AF37]" aria-hidden="true" />
+                  <span>{CONTACT.phone}</span>
+                </a>
+              ) : (
+                <span className="text-xs text-[#F8F6ED]/70">Restaurant contact details available on request</span>
+              )}
             </div>
           </div>
         </div>
@@ -1913,7 +1915,7 @@ export default function DastarkhwanApp() {
           <div className="space-y-2 border-t border-[#D4AF37]/20 pt-5 text-xs text-[#F8F6ED]/75">
             <p className="font-medium text-[#D4AF37]">{CONTACT.address}</p>
             <p>Concierge: {CONTACT.phone || "Add restaurant phone number"}</p>
-            <p>WhatsApp: {CONTACT.whatsapp || "Add restaurant WhatsApp number"}</p>
+            <p>WhatsApp: {CONTACT.whatsapp || "Add restaurant WhatsApp number before launch"}</p>
           </div>
         </div>
       </dialog>
@@ -2628,8 +2630,7 @@ export default function DastarkhwanApp() {
                 Reserve Your Dastarkhwan
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#4A4A46] sm:text-base">
-                Request your preferred dining salon, evening seating, and dietary considerations. All reservations are
-                personally confirmed by our Clifton maître d&apos;.
+                Request your preferred dining salon, evening seating, and dietary considerations. Submit a sample reservation request. In a live restaurant website, requests are sent to the restaurant for confirmation.
               </p>
             </div>
 
@@ -2924,9 +2925,9 @@ export default function DastarkhwanApp() {
                         Direct Concierge Desk
                       </dt>
                       <dd className="mt-1">
-                        <a href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`} className="hover:text-[#D4AF37]">
-                          {CONTACT.phone}
-                        </a>
+                        {CONTACT.phone ? (
+                          <a href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`} className="hover:text-[#D4AF37]">{CONTACT.phone}</a>
+                        ) : "Add restaurant phone number before launch"}
                       </dd>
                     </div>
                   </div>
@@ -2953,9 +2954,9 @@ export default function DastarkhwanApp() {
                         Private Events &amp; Press
                       </dt>
                       <dd className="mt-1">
-                        <a href={`mailto:${CONTACT.email}`} className="hover:text-[#D4AF37]">
-                          {CONTACT.email}
-                        </a>
+                        {CONTACT.email ? (
+                          <a href={`mailto:${CONTACT.email}`} className="hover:text-[#D4AF37]">{CONTACT.email}</a>
+                        ) : "Add restaurant email before launch"}
                       </dd>
                     </div>
                   </div>
