@@ -241,7 +241,7 @@ const MENU_ITEMS: MenuItem[] = [
     imageAlt: "Fragrant golden lamb pulao steamed with whole spices and toasted nuts",
   },
   {
-    id: "karachi-sindhi-biryani",
+    id: "sindhi-mutton-biryani",
     category: "biryani",
     categoryLabel: "Biryani & Rice",
     title: "Sindhi Mutton Biryani",
@@ -583,7 +583,7 @@ function DastarkhwanLogo({
 
       {showWordmark && (
         <span className="dk-logo-text">
-          <span className="dk-wordmark">DASTARKHWAN</span>
+          <span className="dk-wordmark">{CONTACT.name}</span>
           {showTagline && (
             <span className="dk-tagline">
               <span className="dk-tagline-rule" aria-hidden="true" />
