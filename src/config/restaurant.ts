@@ -14,4 +14,4 @@ export const restaurantConfig = {
   hoursValet: "",
   mapUrl: "",
   isDemo: true,
-} as const;
+};
