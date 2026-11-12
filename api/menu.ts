@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { json, onlyMethod, supabase } from "./_lib/http";
+import { json, onlyMethod, supabase } from "./_lib/http.js";
 export default async function handler(req:any,res:any){
  if(!onlyMethod(req,res,"GET"))return;
  try{
