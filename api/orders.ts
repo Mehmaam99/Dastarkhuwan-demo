@@ -1,4 +1,4 @@
-import { json, onlyMethod, supabase } from "./_lib/http";
+import { json, onlyMethod, supabase } from "./_lib/http.js";
 export default async function handler(req:any,res:any){
  if(!onlyMethod(req,res,"POST"))return;
  const key=String(req.headers["idempotency-key"]||"");
