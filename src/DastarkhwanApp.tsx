@@ -1803,8 +1803,7 @@ export default function DastarkhwanApp() {
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <a
-                {CONTACT.phone ? (
+              {CONTACT.phone ? (
                 <a href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`} className="inline-flex items-center gap-1.5 text-[#F8F6ED] transition hover:text-[#D4AF37]">
                   <Phone size={13} strokeWidth={1.6} className="text-[#D4AF37]" aria-hidden="true" />
                   <span>{CONTACT.phone}</span>
