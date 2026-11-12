@@ -2537,6 +2537,7 @@ export default function DastarkhwanApp() {
                 </h2>
                 <span className="hidden h-px w-14 bg-gradient-to-l from-transparent to-[#C6962C] sm:inline-block" aria-hidden="true" />
               </div>
+              <p className="mt-2 text-xs text-[#F8F6ED]/65">Illustrative sample reviews for this demo — replace with verified customer feedback before launch.</p>
             </div>
 
             <div className="mt-10 flex items-center justify-between gap-4 sm:gap-8">
@@ -2943,7 +2944,7 @@ export default function DastarkhwanApp() {
                       <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
                         WhatsApp Reservations
                       </dt>
-                      <dd className="mt-1 text-[#F8F6ED]">{CONTACT.whatsapp}</dd>
+                      <dd className="mt-1 text-[#F8F6ED]">{CONTACT.whatsapp ? <a href={`https://wa.me/${CONTACT.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="hover:text-[#D4AF37]">{CONTACT.whatsapp}</a> : "Add restaurant WhatsApp number before launch"}</dd>
                     </div>
                   </div>
 
