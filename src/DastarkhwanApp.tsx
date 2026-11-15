@@ -6,23 +6,29 @@ import {
   ArrowUp,
   Award,
   Calendar,
+  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Clock,
+  Copy,
   Flame,
+  Heart,
   Instagram,
   Mail,
   MapPin,
   Menu,
   MessageCircle,
+  Moon,
   Phone,
   QrCode,
   Search,
+  Share2,
   Sparkles,
   Star,
-  Users,
+  Sun,
   UtensilsCrossed,
+  Volume2,
   X,
 } from "lucide-react";
 
@@ -40,6 +46,9 @@ type TimeSlotOption =
   | "Prime Dinner (8:30 PM – 10:30 PM)"
   | "Midnight Feast (10:45 PM – 1:00 AM)";
 type InquiryType = "Private Banquet" | "Bespoke Catering" | "Press & Editorial";
+type MenuViewMode = "dishes" | "sommelier";
+type SpiceFilter = "all" | 1 | 2 | 3;
+type AmbienceLighting = "twilight" | "midnight";
 
 interface MenuItem {
   id: string;
@@ -55,6 +64,33 @@ interface MenuItem {
   ingredients: string[];
   image: string;
   imageAlt: string;
+  // Heritage & Craft Extensions
+  heritageStory: string;
+  cookingTechnique: string;
+  suggestedPairing: string;
+  dietaryTags: string[];
+  chefNote: string;
+}
+
+interface RoyalFeastCourse {
+  courseTitle: string;
+  dishTitle: string;
+  craftNote: string;
+}
+
+interface RoyalFeastMenu {
+  id: string;
+  badge: string;
+  title: string;
+  tagline: string;
+  guestCount: string;
+  recommendedHall: HallPreference;
+  pricePerGuestPkr: number;
+  totalPricePkr: number;
+  pacingMinutes: number;
+  description: string;
+  courses: RoyalFeastCourse[];
+  chefSignatureTouch: string;
 }
 
 interface AmbienceItem {
@@ -64,6 +100,8 @@ interface AmbienceItem {
   hallPreference: HallPreference;
   capacity: string;
   sensoryNote: string;
+  twilightNote: string;
+  midnightNote: string;
   description: string;
   image: string;
   imageAlt: string;
@@ -130,6 +168,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Prime mutton", "Roasted spices", "Crisp flatbread", "Mint chutney"],
     image: "/images/dish-galouti.jpg",
     imageAlt: "Four seared Lucknowi Galouti Kebabs plated on golden flatbread with fresh herbs",
+    heritageStory:
+      "Created in the 18th-century royal kitchens of Awadh for Nawab Asad-ud-Daula, minced thirty-two times with raw papaya and twenty-four hand-ground spices so delicate they melt upon the palate without chewing.",
+    cookingTechnique: "Dhungar charcoal-smoked with whole cloves and gently pan-seared over convex copper tawa.",
+    suggestedPairing: "Saffron Sheermal, Ulte Tawe Ka Paratha & Mint Anardana Raita",
+    dietaryTags: ["100% Zabihah Halal", "Dairy-Conscious", "Awadh Royal Heritage"],
+    chefNote: "Arrives beneath a polished antique-gold cloche—inhale the delicate clove aroma before savoring.",
   },
   {
     id: "peshawari-charsi-chapli",
@@ -146,13 +190,19 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Beef rib-eye", "Crushed coriander", "Vine tomato", "Green chili"],
     image: "/images/dish-chapli.jpg",
     imageAlt: "Charred spiced minced meat patties topped with seared tomato and fresh herbs",
+    heritageStory:
+      "Born along the historic Khyber spice trails and perfected in Peshawar's Qissa Khwani Bazaar, seasoned generously with roasted coriander, pomegranate arils, and heirloom salt.",
+    cookingTechnique: "Flash-crisped in clarified cow's ghee on a seasoned concave cast-iron skillet over blazing coals.",
+    suggestedPairing: "Peshawari Kandahari Flatbread & Tangy Dried Plum Chutney",
+    dietaryTags: ["100% Zabihah Halal", "Nut-Free", "High-Protein Heritage"],
+    chefNote: "Features a crisp, lacy edge with a delightfully juicy, peppered center.",
   },
   {
     id: "angara-reshmi-seekh",
     category: "shuruaat",
     categoryLabel: "Starter",
     title: "Silky Chicken Seekh Kebabs",
-    tagline: "Grilled to perfection",
+    tagline: "Grilled to perfection over live oak",
     pricePkr: 3250,
     spiceLevel: 2,
     spiceLabel: "Medium",
@@ -162,6 +212,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Tender chicken", "Green cardamom", "Butter glaze", "Roasted pistachio"],
     image: "/images/dish-seekh.jpg",
     imageAlt: "Charcoal-grilled spiced meat skewers steaming over dark slate with herbs and lime",
+    heritageStory:
+      "A courtly delicacy where prime chicken breast is whipped with double cream, green cardamom, and white Tellicherry pepper, then skewered on wide silvered blades.",
+    cookingTechnique: "Slow-turned over live oak coals and continuously basted with saffron-infused clarified butter.",
+    suggestedPairing: "Roghani Sesame Naan & Coriander-Lime Kachumber Salad",
+    dietaryTags: ["100% Zabihah Halal", "Contains Dairy", "Gentle Cardamom Heat"],
+    chefNote: "Brushed tableside with salted saffron butter just before service.",
   },
 
   // Chef's Signatures (3)
@@ -180,6 +236,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Lamb shank", "Slow-simmered gravy", "Fresh ginger", "Artisan bread"],
     image: "/images/dish-nihari.jpg",
     imageAlt: "Slow-simmered lamb shank Nihari garnished with crisp ginger strips and warm bread",
+    heritageStory:
+      "From the Arabic 'Nahar' (morning), this royal stew was crafted to fortify emperors after dawn assemblies. Prepared through an unbroken 24-hour cycle in sealed copper deghs.",
+    cookingTechnique: "Low-heat earthen braise with eighteen dry-toasted spices, star anise, pipli, and mace.",
+    suggestedPairing: "Piping Hot Tandoori Kulcha, Wild Ginger Juliennes & Wild Clifton Lime",
+    dietaryTags: ["100% Zabihah Halal", "Collagen-Rich Broth", "Gluten-Free Gravy Base"],
+    chefNote: "Our steward extracts the succulent bone marrow tableside directly onto warm bread.",
   },
   {
     id: "shinwari-karahi",
@@ -196,6 +258,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Fresh mutton", "Roma tomatoes", "Black pepper", "Garlic naan"],
     image: "/images/dish-karahi.jpg",
     imageAlt: "Rich sizzling mutton karahi served in a hammered copper wok with fresh herbs",
+    heritageStory:
+      "Hailing from the Shinwari Pashtun clans of the Khyber region, where cooking relies strictly on pristine meat quality, tomatoes, and natural fats without heavy powdered spices.",
+    cookingTechnique: "Flash reduction in an untreated iron wok over high-velocity hardwood flame.",
+    suggestedPairing: "Clay-Oven Kandahari Naan, Sliced Wild Radish & Himalayan Pink Salt",
+    dietaryTags: ["100% Zabihah Halal", "Authentic Zero Onion/Turmeric", "Nut-Free"],
+    chefNote: "Arrives at your setting sizzling directly in the seasoned iron vessel.",
   },
   {
     id: "chinioti-dum-kunna",
@@ -212,6 +280,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Mutton shoulder", "Black cumin", "Pure saffron", "Clay pot"],
     image: "/images/dish-kunna.jpg",
     imageAlt: "Slow-braised spiced mutton curry served warm in an authentic clay pot",
+    heritageStory:
+      "An ancient culinary pride of Chiniot on the Chenab riverbanks, where mutton shoulder is braised in unglazed earthenware vessels buried beneath slow embers.",
+    cookingTechnique: "Dough-sealed clay pot (kunna) steamed under low underground charcoal heat.",
+    suggestedPairing: "Whole-Wheat Khamiri Roti & Pickled Pearl Shallots",
+    dietaryTags: ["100% Zabihah Halal", "Natural Earthenware Infusion", "Dairy-Free Option"],
+    chefNote: "The natural unglazed clay imparts an earthy sweetness found nowhere else.",
   },
 
   // Biryani & Pulao (3)
@@ -230,6 +304,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Aged basmati", "Saffron milk", "Crisp onions", "Mint raita"],
     image: "/images/dish-awadhi-biryani.jpg",
     imageAlt: "Aromatic saffron basmati biryani layered with tender meat and fresh herbs",
+    heritageStory:
+      "The pinnacle of refined Awadhi court dining. Rice and yogurt-marinated mutton are harmonized in a heavy copper degh sealed with wheat dough (Pardah).",
+    cookingTechnique: "Dum pukht method with glowing live embers placed on top of the sealed copper lid.",
+    suggestedPairing: "Smoked Burhani Garlic Raita & Spiced Mirch Ka Salan",
+    dietaryTags: ["100% Zabihah Halal", "Pure Kashmiri Saffron", "Gluten-Conscious"],
+    chefNote: "Unsealed at your setting to release an intoxicating cloud of cardamom, saffron, and aged rice.",
   },
   {
     id: "dehlvi-yakhni-pulao",
@@ -246,6 +326,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Slow lamb stock", "Whole spices", "Aged basmati", "Whipped yogurt"],
     image: "/images/dish-dehlvi-pulao.jpg",
     imageAlt: "Fragrant golden lamb pulao steamed with whole spices and toasted nuts",
+    heritageStory:
+      "The aristocratic staple of Old Delhi havelis—subtle, fragrant, and exquisitely light. Grains absorb the essence of slow-simmered bone broth.",
+    cookingTechnique: "Stock-steeped reduction in heavy copper pots over smoldering charcoals.",
+    suggestedPairing: "Whipped Zeera Raita & Chilled Pickled Turnips",
+    dietaryTags: ["100% Zabihah Halal", "Delicate Whole Spices", "Easy Digestion"],
+    chefNote: "Subtle on the palate, soothing, and wonderfully aromatic.",
   },
   {
     id: "karachi-sindhi-biryani",
@@ -262,6 +348,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Tangy plums", "Garden mint", "Golden potatoes", "Roasted cumin raita"],
     image: "/images/dish-sindhi-biryani.jpg",
     imageAlt: "Vibrant spiced Pakistani biryani with herbs, saffron rice, and tender meat",
+    heritageStory:
+      "Karachi's crowning culinary identity—a bold celebration rice layered with sweet dried aloo bukhara, garden mint, spiced golden potatoes, and succulent mutton.",
+    cookingTechnique: "Multi-tier layered dum steam in hammered copper vessel over charcoal embers.",
+    suggestedPairing: "Chilled Cucumber Kachumber Salad & Roasted Cumin Raita",
+    dietaryTags: ["100% Zabihah Halal", "Bold Spices", "Celebration Feast"],
+    chefNote: "The exhilarating interplay of savory mutton, tangy plum, and garden mint defines modern Karachi dining.",
   },
 
   // Desserts (3)
@@ -280,6 +372,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Golden brioche", "Reduced milk cream", "Saffron", "Toasted pistachio"],
     image: "/images/dish-shahi-tukray.jpg",
     imageAlt: "Golden saffron-soaked Shahi Tukray topped with creamy milk reduction and pistachios",
+    heritageStory:
+      "Translated as 'Royal Morsels', this dessert was favored in Mughal banquets. Brioche is browned in clarified butter, steeped in saffron syrup, and bathed in eight-hour rabri.",
+    cookingTechnique: "Eight-hour slow milk reduction (Khoya Rabri) and golden ghee browning.",
+    suggestedPairing: "Cardamom Doodh Patti or Warm Kashmiri Pink Chai",
+    dietaryTags: ["Vegetarian", "Contains Almonds & Pistachios", "Real Saffron"],
+    chefNote: "Crowned tableside with pure edible silver leaf (chandi ka varq) and crushed pistachios.",
   },
   {
     id: "peshawari-pistachio-kulfi",
@@ -296,6 +394,12 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Slow milk reduction", "Salted pistachio", "Rosewater", "Cardamom"],
     image: "/images/dish-kulfi.jpg",
     imageAlt: "Creamy traditional pistachio kulfi garnished with crushed nuts and rose petals",
+    heritageStory:
+      "Crafted in conical metal molds packed inside Himalayan rock salt ice baths, retaining the deep caramelized richness of slowly condensed milk.",
+    cookingTechnique: "Continuous reduction of full-cream farm milk in broad copper cauldrons.",
+    suggestedPairing: "Wild Falsa Berry Coulis & Edible Dried Rose Petals",
+    dietaryTags: ["Vegetarian", "Gluten-Free", "Rich Pistachio Nut"],
+    chefNote: "Sliced tableside into dense, frosty golden medallions.",
   },
   {
     id: "badami-gajar-halwa",
@@ -312,6 +416,164 @@ const MENU_ITEMS: MenuItem[] = [
     ingredients: ["Sweet red carrots", "Fresh cream crumble", "Toasted almonds", "Cardamom"],
     image: "/images/dish-halwa.jpg",
     imageAlt: "Rich caramelized carrot halwa dessert topped with slivered almonds",
+    heritageStory:
+      "A seasonal winter banquet treasure prepared with deep-red carrots from Punjab, slowly caramelized with fresh cow's milk khoya and toasted Mamra almonds.",
+    cookingTechnique: "Four-hour slow open-pan reduction with steady wooden-paddle stirring.",
+    suggestedPairing: "Chilled Whipped Clotted Cream or Saffron Infused Green Tea",
+    dietaryTags: ["Vegetarian", "Gluten-Free", "Toasted California & Mamra Almonds"],
+    chefNote: "Delivered piping hot inside a miniature hammered copper casserole.",
+  },
+];
+
+const ROYAL_FEAST_MENUS: RoyalFeastMenu[] = [
+  {
+    id: "duo-tasting",
+    badge: "Intimate Royal Duo",
+    title: "Shaahi Dastarkhwan for Two",
+    tagline: "A romantic 4-course celebration beneath candlelit arches",
+    guestCount: "2 Guests",
+    recommendedHall: "The Royal Courtyard",
+    pricePerGuestPkr: 4800,
+    totalPricePkr: 9600,
+    pacingMinutes: 90,
+    description:
+      "Crafted for intimate dinners and anniversaries, progressing seamlessly from melt-in-mouth Awadhi Galouti medallions to 24-hour slow-simmered Nalli Nihari and fragrant saffron biryani.",
+    courses: [
+      {
+        courseTitle: "Course I • Shuruaat",
+        dishTitle: "Lucknowi Galouti Kebabs & Angara Silky Seekh",
+        craftNote: "Smoked clove infusion served on warm saffron sheermal with mint anardana raita.",
+      },
+      {
+        courseTitle: "Course II • Signature Entrée",
+        dishTitle: "24-Hour Nalli Nihari with Saffron Roghani Naan",
+        craftNote: "Marrow shank slow-simmered for a full day, unveiled beneath polished brass cloche.",
+      },
+      {
+        courseTitle: "Course III • Regal Dum Rice",
+        dishTitle: "Awadhi Mutton Biryani (Sealed Copper Pot)",
+        craftNote: "Aged long-grain basmati with Kashmiri saffron milk, unsealed tableside with dough cut.",
+      },
+      {
+        courseTitle: "Course IV • Sweet Finale & Kahwa",
+        dishTitle: "Saffron Shahi Tukray & Kashmiri Pink Chai",
+        craftNote: "Brioche soaked in 8-hour rabri with silver leaf and wild cardamom green tea.",
+      },
+    ],
+    chefSignatureTouch: "Tableside cloche unveiling with wild aromatic herb smoke and rose mist.",
+  },
+  {
+    id: "family-majlis",
+    badge: "Family & Celebration",
+    title: "The Grand Majlis Feast",
+    tagline: "An opulent banquet designed for shared dining & hearty laughter",
+    guestCount: "4 to 6 Guests",
+    recommendedHall: "Main Emerald Hall",
+    pricePerGuestPkr: 3950,
+    totalPricePkr: 19750,
+    pacingMinutes: 105,
+    description:
+      "The quintessential Pakistani celebration spread. Features iron-skillet Peshawari chapli kebabs, sizzling Shinwari mutton karahi, slow clay-pot kunna, and vibrant Karachi Sindhi biryani.",
+    courses: [
+      {
+        courseTitle: "Course I • Charcoal & Skillet Starters",
+        dishTitle: "Peshawari Chapli Kebabs & Silky Chicken Seekh (Platter)",
+        craftNote: "Hand-minced ribeye crisped on cast iron alongside saffron butter chicken skewers.",
+      },
+      {
+        courseTitle: "Course II • Live Fire & Clay Pot Mains",
+        dishTitle: "Royal Shinwari Karahi (750g Wok) & Clay-Pot Mutton Kunna",
+        craftNote: "Sizzling high-flame iron wok reduction paired with sealed unglazed earthenware braise.",
+      },
+      {
+        courseTitle: "Course III • Celebration Basmati",
+        dishTitle: "Karachi Sindhi Dum Biryani & Fragrant Yakhni Pulao",
+        craftNote: "Layered tangy plum & mint mutton biryani served alongside twelve-hour lamb stock pulao.",
+      },
+      {
+        courseTitle: "Course IV • Grand Royal Dessert Trio",
+        dishTitle: "Peshawari Pistachio Kulfi & Warm Badami Carrot Halwa",
+        craftNote: "Himalayan rock-salt churned kulfi with warm caramelized red carrot & almond halwa.",
+      },
+    ],
+    chefSignatureTouch: "Complimentary artisan tandoor basket with hot sesame Roghani and Kandahari naans.",
+  },
+  {
+    id: "emperor-banquet",
+    badge: "VIP Diplomatic & Private Suite",
+    title: "Emperor Akbar's 5-Course Banquet",
+    tagline: "The ultimate culinary showcase for dignitaries & private gatherings",
+    guestCount: "8 to 12 Guests",
+    recommendedHall: "VIP Private Alcove",
+    pricePerGuestPkr: 4200,
+    totalPricePkr: 42000,
+    pacingMinutes: 120,
+    description:
+      "Hosted inside our enclosed VIP Private Alcove with a dedicated steward team, personalized printed menu scrolls, and a master tour through Pakistan's greatest ancestral culinary treasures.",
+    courses: [
+      {
+        courseTitle: "Course I • Royal Charcoal Symphony",
+        dishTitle: "Grand Charcoal Medley (Galouti, Chapli, Reshmi Seekh)",
+        craftNote: "Live presentation with glowing hardwood embers and freshly whipped mint chutneys.",
+      },
+      {
+        courseTitle: "Course II • Heirloom Slow-Dum Mains",
+        dishTitle: "24-Hour Nalli Nihari + Royal Shinwari Karahi + Clay-Pot Kunna",
+        craftNote: "Three master traditions: 24-hr marrow broth, sizzling high wok, and sealed earthen clay.",
+      },
+      {
+        courseTitle: "Course III • Dual Regional Rice Heritage",
+        dishTitle: "Awadhi Dum Mutton Biryani + Old Delhi Yakhni Pulao",
+        craftNote: "Sealed dough-crusted copper deghs cracked open tableside by Executive Chef.",
+      },
+      {
+        courseTitle: "Course IV • Tandoor & Accompaniments",
+        dishTitle: "Unlimited Artisanal Naan, Sheermal, Kulcha & Burhani Raita",
+        craftNote: "Continuously baked fresh in clay tandoor and delivered piping hot throughout.",
+      },
+      {
+        courseTitle: "Course V • Imperial Sweet Court",
+        dishTitle: "Shahi Tukray Rabri, Badami Halwa & Peshawari Kulfi Medley",
+        craftNote: "Edible 24K silver leaf finish with crushed pistachios, paired with Kashmiri Pink Chai.",
+      },
+    ],
+    chefSignatureTouch: "Private butler service, reserved VIP valet portico, and bespoke tableside floral setup.",
+  },
+  {
+    id: "charcoal-kebab-lovers",
+    badge: "Charcoal & Ember Lovers",
+    title: "The Live Fire Barbecue Tasting",
+    tagline: "For discerning palates dedicated to smoke, char, and tender marinades",
+    guestCount: "2 to 4 Guests",
+    recommendedHall: "The Royal Courtyard",
+    pricePerGuestPkr: 3550,
+    totalPricePkr: 14200,
+    pacingMinutes: 80,
+    description:
+      "A celebration of open flames and smoldering oak embers. Focusing on the finest prime cuts seared to juicy perfection with roasted whole spices and crisp hearth-baked flatbreads.",
+    courses: [
+      {
+        courseTitle: "Course I • Smoked Medallions",
+        dishTitle: "Double Galouti Medallions & Peshawari Chapli Patties",
+        craftNote: "Charcoal smoke infusion with crushed pomegranate and Roma tomato sear.",
+      },
+      {
+        courseTitle: "Course II • Skewers & Wok",
+        dishTitle: "Silky Chicken Seekh Skewers & Royal Shinwari Mutton Karahi",
+        craftNote: "Saffron butter glaze over live embers paired with sizzling cast-iron wok mutton.",
+      },
+      {
+        courseTitle: "Course III • Aromatic Rice & Naan",
+        dishTitle: "Classic Yakhni Pulao with Garlic Butter Roghani Naan",
+        craftNote: "Fragrant 12-hour lamb stock rice with fluffy tandoori sesame bread.",
+      },
+      {
+        courseTitle: "Course IV • Refreshing Finish",
+        dishTitle: "Peshawari Pistachio Kulfi & Fresh Mint Anardana Sparkler",
+        craftNote: "Cardamom cream chill paired with crushed wild mint and pomegranate cooler.",
+      },
+    ],
+    chefSignatureTouch: "Tableside brush of clarified cow's butter and Himalayan pink rock salt.",
   },
 ];
 
@@ -323,6 +585,8 @@ const AMBIENCE_GALLERY: AmbienceItem[] = [
     hallPreference: "The Royal Courtyard",
     capacity: "Up to 44 Guests • Open Air",
     sensoryNote: "Coastal evening breeze, limestone colonnades & glowing brass lanterns",
+    twilightNote: "Amber sea breeze, soft acoustic sitar notes & glowing sunset skies",
+    midnightNote: "Flickering brass candle lanterns, cool coastal air & star-filled dining",
     description:
       "Framed by hand-carved stone arches, lush night-blooming jasmine, and coastal sea breeze, our courtyard transitions seamlessly from relaxed lunch to candlelit dinner.",
     image: "/images/ambience-courtyard.jpg",
@@ -335,6 +599,8 @@ const AMBIENCE_GALLERY: AmbienceItem[] = [
     hallPreference: "Main Emerald Hall",
     capacity: "Chef's Counter • 8 Seats",
     sensoryNote: "Live hardwood embers, sizzle platters & roasted spice aromas",
+    twilightNote: "Live fire glow, sizzling seekh skewers & warm cardamom smoke",
+    midnightNote: "Glowing embers, crackling charcoal & late-night skillet theatrics",
     description:
       "At the heart of our culinary theatre, master chefs grill hand-crafted seekh skewers over glowing embers and tend slow-sealed copper pots.",
     image: "/images/ambience-dumpit.jpg",
@@ -347,6 +613,8 @@ const AMBIENCE_GALLERY: AmbienceItem[] = [
     hallPreference: "Main Emerald Hall",
     capacity: "Up to 68 Guests • Velvet Seating",
     sensoryNote: "Plush emerald banquettes, brushed antique brass & warm candlelight",
+    twilightNote: "Soft brass pendant glow, elegant afternoon conversations & marble tables",
+    midnightNote: "Intimate velvet seating, candlelit shadows & unhurried late dining",
     description:
       "Deep emerald velvet seating and sleek marble tables bathed in soft brass pendant glow—crafted for unhurried conversation and evening elegance.",
     image: "/images/hero-salon.jpg",
@@ -359,6 +627,8 @@ const AMBIENCE_GALLERY: AmbienceItem[] = [
     hallPreference: "Main Emerald Hall",
     capacity: "Every Signature Entrée",
     sensoryNote: "Warm hammered brass domes unveiled with delicate aromatic smoke",
+    twilightNote: "Golden cloche reflection beneath warm dinner lighting",
+    midnightNote: "Dramatic aromatic steam plume rising beneath candlelight",
     description:
       "Inspired by our golden cloche crest, signature entrees arrive beneath polished antique-gold domes, lifted tableside to reveal fresh saffron and herb aromas.",
     image: "/images/cloche-emblem.png",
@@ -371,6 +641,8 @@ const AMBIENCE_GALLERY: AmbienceItem[] = [
     hallPreference: "Main Emerald Hall",
     capacity: "Curated Spice Library",
     sensoryNote: "Sun-dried Kashmiri saffron, whole cardamom & freshly toasted blends",
+    twilightNote: "Freshly roasted black cumin and crushed coriander aromas",
+    midnightNote: "Warm clove and cinnamon scent lingering in the evening air",
     description:
       "Each morning begins with dry-toasting whole saffron, black cardamom, and mountain spices sourced directly across Pakistan, freshly ground per service.",
     image: "/images/ambience-spicevault.jpg",
@@ -383,6 +655,8 @@ const AMBIENCE_GALLERY: AmbienceItem[] = [
     hallPreference: "VIP Private Alcove",
     capacity: "8 to 18 Guests • Dedicated Host",
     sensoryNote: "Intimate privacy screens, bespoke menus & dedicated table steward",
+    twilightNote: "Sunlight filtering through carved floral jali screens",
+    midnightNote: "Total evening seclusion with personal butler & valet service",
     description:
       "Enclosed behind sculpted arches with dedicated hospitality staff and direct valet access—designed for family celebrations and private hosting.",
     image: "/images/ambience-alcoves.jpg",
@@ -439,7 +713,7 @@ function getCustomValidityMessage(control: HTMLInputElement | HTMLSelectElement 
     return `${label} must be at least ${control.getAttribute("minlength")} characters.`;
   }
   if (v.rangeUnderflow) {
-    return `Please select today or an upcoming dining date.`;
+    return "Please select today or an upcoming dining date.";
   }
   if (v.patternMismatch) {
     return "Please enter a valid 10–15 digit WhatsApp or phone number.";
@@ -449,17 +723,21 @@ function getCustomValidityMessage(control: HTMLInputElement | HTMLSelectElement 
 
 function attachUserInvalidFallback(form: HTMLFormElement, getInteracted: (el: Element) => boolean, markInteracted: (el: Element) => void) {
   const hasNative = typeof CSS !== "undefined" && typeof CSS.supports === "function" && CSS.supports("selector(:user-invalid)");
+
   const update = (el: EventTarget | null) => {
-    if (!(el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement)) return;
-    if (hasNative) return;
-    if (el.type === "radio" && el.name) {
-      const group = form.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${CSS.escape(el.name)}"]`);
-      const anyInteracted = [...group].some((r) => getInteracted(r));
-      const groupInvalid = anyInteracted && !el.validity.valid;
-      group.forEach((r) => r.classList.toggle("user-invalid-fallback", groupInvalid));
-      return;
+    if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) {
+      if (el.type === "radio" && el.name) {
+        const group = form.querySelectorAll<HTMLInputElement>(`input[type="radio"][name="${CSS.escape(el.name)}"]`);
+        const anyInteracted = [...group].some((r) => getInteracted(r));
+        const groupInvalid = anyInteracted && !el.validity.valid;
+        group.forEach((r) => {
+          if (!hasNative) r.classList.toggle("user-invalid-fallback", groupInvalid);
+        });
+        return;
+      }
+      const isInvalid = getInteracted(el) && !el.validity.valid;
+      if (!hasNative) el.classList.toggle("user-invalid-fallback", isInvalid);
     }
-    el.classList.toggle("user-invalid-fallback", getInteracted(el) && !el.validity.valid);
   };
 
   const onBlur = (e: Event) => {
@@ -469,7 +747,7 @@ function attachUserInvalidFallback(form: HTMLFormElement, getInteracted: (el: El
     }
   };
   const onChange = (e: Event) => {
-    if (e.target instanceof HTMLSelectElement || (e.target instanceof HTMLInputElement && (e.target.type === "radio" || e.target.type === "date"))) {
+    if (e.target instanceof Element) {
       markInteracted(e.target);
       update(e.target);
     }
@@ -516,7 +794,7 @@ function getIsUserInvalid(el: HTMLInputElement | HTMLSelectElement | HTMLTextAre
 }
 
 /* ============================================================================
- * Reusable Master Brand Cloche Emblem SVG (Phase 1 Exact Geometry)
+ * Master Brand Cloche Emblem SVG
  * ============================================================================ */
 
 function DastarkhwanLogo({
@@ -553,26 +831,15 @@ function DastarkhwanLogo({
         </defs>
 
         {/* Three symmetrical aromatic steam plumes */}
-        <path
-          d="M48 25C44 20 43 13 48 9C51 14 50 20 48 25Z"
-          fill={`url(#${gradId})`}
-          opacity="0.92"
-        />
-        <path
-          d="M60 22C55 15 56 7 61 2C65 8 63 16 60 22Z"
-          fill={`url(#${gradId})`}
-        />
-        <path
-          d="M72 25C76 20 77 13 72 9C69 14 70 20 72 25Z"
-          fill={`url(#${gradId})`}
-          opacity="0.92"
-        />
+        <path d="M48 25C44 20 43 13 48 9C51 14 50 20 48 25Z" fill={`url(#${gradId})`} opacity="0.92" />
+        <path d="M60 22C55 15 56 7 61 2C65 8 63 16 60 22Z" fill={`url(#${gradId})`} />
+        <path d="M72 25C76 20 77 13 72 9C69 14 70 20 72 25Z" fill={`url(#${gradId})`} opacity="0.92" />
 
         {/* Crown knob & collar */}
         <circle cx="60" cy="27" r="4" fill={`url(#${gradId})`} />
         <rect x="53" y="31" width="14" height="2.4" rx="1.2" fill={`url(#${gradId})`} />
 
-        {/* Arched dome with Phase 1 sculpted crescent highlight cutout */}
+        {/* Arched dome with sculpted crescent highlight cutout */}
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -581,10 +848,7 @@ function DastarkhwanLogo({
         />
 
         {/* Curved luxury charger platter base */}
-        <path
-          d="M12 69C31 75 89 75 108 69C97 78 78 81 60 81C42 81 23 78 12 69Z"
-          fill={`url(#${gradId})`}
-        />
+        <path d="M12 69C31 75 89 75 108 69C97 78 78 81 60 81C42 81 23 78 12 69Z" fill={`url(#${gradId})`} />
         <path d="M24 85H96" stroke={`url(#${gradId})`} strokeWidth="1.2" strokeLinecap="round" opacity="0.65" />
       </svg>
 
@@ -605,7 +869,7 @@ function DastarkhwanLogo({
 }
 
 /* ============================================================================
- * Spice Indicator Helper (Accessible: text + visual 1-3 flame glyphs)
+ * Spice Indicator Helper
  * ============================================================================ */
 
 function SpiceRating({ level, label }: { level: 1 | 2 | 3; label: string }) {
@@ -693,7 +957,6 @@ function useModalController(isOpen: boolean, onClose: () => void) {
     dialog.addEventListener("close", handleClose);
     dialog.addEventListener("cancel", handleCancel);
 
-    // Light-dismiss fallback only where native `closedby="any"` is unavailable
     let downInside = false;
     const supportsClosedBy = "closedBy" in HTMLDialogElement.prototype;
 
@@ -735,6 +998,97 @@ function useModalController(isOpen: boolean, onClose: () => void) {
 }
 
 /* ============================================================================
+ * Web Audio Ambient Soundscape (Courtyard Sitar & Tanpura Acoustic Harmony)
+ * ============================================================================ */
+
+function useAmbienceSound() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+
+  const toggleSound = useCallback(() => {
+    if (isPlaying) {
+      if (gainNodeRef.current && audioCtxRef.current) {
+        const ctx = audioCtxRef.current;
+        gainNodeRef.current.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.3);
+        setTimeout(() => {
+          ctx.close().catch(() => {});
+          audioCtxRef.current = null;
+          gainNodeRef.current = null;
+          setIsPlaying(false);
+        }, 350);
+      } else {
+        setIsPlaying(false);
+      }
+    } else {
+      try {
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const ctx = new AudioContextClass();
+        const masterGain = ctx.createGain();
+        masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        masterGain.gain.setTargetAtTime(0.045, ctx.currentTime, 0.8);
+
+        // Tanpura / Sitar drone root harmonics (C# tone: 138.59Hz, 207.65Hz, 277.18Hz)
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(420, ctx.currentTime);
+
+        const osc1 = ctx.createOscillator();
+        osc1.type = "triangle";
+        osc1.frequency.setValueAtTime(138.59, ctx.currentTime); // C#3
+
+        const osc2 = ctx.createOscillator();
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(207.65, ctx.currentTime); // G#3 (Fifth)
+
+        const osc3 = ctx.createOscillator();
+        osc3.type = "triangle";
+        osc3.frequency.setValueAtTime(277.18, ctx.currentTime); // C#4 (Octave)
+
+        // Slow subtle LFO for natural breath
+        const lfo = ctx.createOscillator();
+        lfo.type = "sine";
+        lfo.frequency.setValueAtTime(0.18, ctx.currentTime);
+        const lfoGain = ctx.createGain();
+        lfoGain.gain.setValueAtTime(8, ctx.currentTime);
+        lfo.connect(lfoGain);
+        lfoGain.connect(filter.frequency);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        osc3.connect(filter);
+        filter.connect(masterGain);
+        masterGain.connect(ctx.destination);
+
+        osc1.start();
+        osc2.start();
+        osc3.start();
+        lfo.start();
+
+        audioCtxRef.current = ctx;
+        gainNodeRef.current = masterGain;
+        setIsPlaying(true);
+      } catch {
+        // Fallback if browser audio policy blocks
+        setIsPlaying(false);
+      }
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    return () => {
+      if (audioCtxRef.current && audioCtxRef.current.state !== "closed") {
+        audioCtxRef.current.close().catch(() => {});
+      }
+    };
+  }, []);
+
+  return { isPlaying, toggleSound };
+}
+
+/* ============================================================================
  * Main Flagship Single-File Application Component
  * ============================================================================ */
 
@@ -746,10 +1100,16 @@ export default function DastarkhwanApp() {
   const closeDrawer = useCallback(() => {
     const drawer = drawerRef.current;
     if (!drawer || !drawer.open) return;
-    drawer.scrollTo({ left: drawer.scrollWidth, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-    window.setTimeout(() => {
-      if (drawer.open) drawer.close();
-    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 20 : 280);
+    drawer.scrollTo({
+      left: drawer.scrollWidth,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
+    window.setTimeout(
+      () => {
+        if (drawer.open) drawer.close();
+      },
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 20 : 280
+    );
   }, []);
 
   const openDrawer = useCallback(() => {
@@ -758,18 +1118,23 @@ export default function DastarkhwanApp() {
     if (!drawer.open) drawer.showModal();
     setDrawerOpen(true);
 
-    // Fallback jump-scroll for browsers without scroll-initial-target
     if (typeof CSS === "undefined" || !CSS.supports("scroll-initial-target", "nearest")) {
       drawer.style.scrollSnapType = "none";
       drawer.scrollLeft = drawer.scrollWidth;
       requestAnimationFrame(() => {
         drawer.style.scrollSnapType = "";
         requestAnimationFrame(() => {
-          drawer.scrollTo({ left: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+          drawer.scrollTo({
+            left: 0,
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          });
         });
       });
     } else {
-      drawer.scrollTo({ left: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      drawer.scrollTo({
+        left: 0,
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      });
     }
   }, []);
 
@@ -780,7 +1145,6 @@ export default function DastarkhwanApp() {
     const handleClose = () => setDrawerOpen(false);
     drawer.addEventListener("close", handleClose);
 
-    // Swipe-shut observer on backdrop spacer sentinel
     const navPanel = drawer.querySelector(".dk-drawer-panel");
     let observer: IntersectionObserver | undefined;
     if (navPanel && typeof IntersectionObserver !== "undefined") {
@@ -797,7 +1161,6 @@ export default function DastarkhwanApp() {
       observer.observe(navPanel);
     }
 
-    // Fallback backdrop progress where scroll-driven CSS animation-timeline isn't supported
     const supportsTimeline = typeof CSS !== "undefined" && CSS.supports("animation-timeline: scroll()");
     const handleScroll = () => {
       if (supportsTimeline) return;
@@ -835,11 +1198,30 @@ export default function DastarkhwanApp() {
     [closeDrawer]
   );
 
-  /* ---------------- Curated Menu Tabs & Search State ---------------- */
+  /* ---------------- Ambient Soundscape Hook ---------------- */
+  const { isPlaying: soundActive, toggleSound } = useAmbienceSound();
+
+  /* ---------------- Curated Menu Tabs, Search & Filter State ---------------- */
+  const [menuViewMode, setMenuViewMode] = useState<MenuViewMode>("dishes");
   const [activeCategory, setActiveCategory] = useState<MenuCategoryId>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [spiceFilter, setSpiceFilter] = useState<SpiceFilter>("all");
   const tablistRef = useRef<HTMLDivElement | null>(null);
   const [fadeState, setFadeState] = useState({ start: false, end: false });
+
+  /* ---------------- Culinary Dish Craft Modal State ---------------- */
+  const [selectedDishModal, setSelectedDishModal] = useState<MenuItem | null>(null);
+  const { dialogRef: dishDialogRef, requestClose: closeDishModal } = useModalController(
+    selectedDishModal !== null,
+    () => setSelectedDishModal(null)
+  );
+
+  /* ---------------- Royal Feast Sommelier State ---------------- */
+  const [selectedFeastId, setSelectedFeastId] = useState<string>("family-majlis");
+  const activeFeast = useMemo(
+    () => ROYAL_FEAST_MENUS.find((f) => f.id === selectedFeastId) || ROYAL_FEAST_MENUS[0],
+    [selectedFeastId]
+  );
 
   useEffect(() => {
     const el = tablistRef.current;
@@ -884,6 +1266,8 @@ export default function DastarkhwanApp() {
     return MENU_ITEMS.filter((item) => {
       const matchesCat = activeCategory === "all" || item.category === activeCategory;
       if (!matchesCat) return false;
+      const matchesSpice = spiceFilter === "all" || item.spiceLevel === spiceFilter;
+      if (!matchesSpice) return false;
       if (!q) return true;
       return (
         item.title.toLowerCase().includes(q) ||
@@ -893,7 +1277,16 @@ export default function DastarkhwanApp() {
         item.ingredients.some((ing) => ing.toLowerCase().includes(q))
       );
     });
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, spiceFilter]);
+
+  /* ---------------- Ambience Gallery Lighting Mode & Lightbox State ---------------- */
+  const [ambienceLighting, setAmbienceLighting] = useState<AmbienceLighting>("twilight");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const activeAmbience = lightboxIndex !== null ? AMBIENCE_GALLERY[lightboxIndex] : null;
+  const { dialogRef: lightboxDialogRef, requestClose: closeLightbox } = useModalController(
+    lightboxIndex !== null,
+    () => setLightboxIndex(null)
+  );
 
   /* ---------------- Guest Reviews Carousel State ---------------- */
   const [reviewIndex, setReviewIndex] = useState(0);
@@ -903,14 +1296,6 @@ export default function DastarkhwanApp() {
   const [qrPreviewOpen, setQrPreviewOpen] = useState(false);
   const { dialogRef: qrDialogRef, requestClose: closeQrDialog } = useModalController(qrPreviewOpen, () =>
     setQrPreviewOpen(false)
-  );
-
-  /* ---------------- Ambience Lightbox Modal State ---------------- */
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const activeAmbience = lightboxIndex !== null ? AMBIENCE_GALLERY[lightboxIndex] : null;
-  const { dialogRef: lightboxDialogRef, requestClose: closeLightbox } = useModalController(
-    lightboxIndex !== null,
-    () => setLightboxIndex(null)
   );
 
   /* ---------------- Reservation Form State & Accessible Validation ---------------- */
@@ -946,6 +1331,7 @@ export default function DastarkhwanApp() {
   const [resLiveSummary, setResLiveSummary] = useState("");
   const resSummaryTimer = useRef<number | undefined>(undefined);
   const [confirmedReservation, setConfirmedReservation] = useState<ReservationConfirmation | null>(null);
+  const [copiedCodeToast, setCopiedCodeToast] = useState(false);
 
   const { dialogRef: confirmDialogRef, requestClose: closeConfirmDialog } = useModalController(
     confirmedReservation !== null,
@@ -1026,6 +1412,49 @@ export default function DastarkhwanApp() {
     [closeLightbox]
   );
 
+  const handlePreSelectDish = useCallback(
+    (dish: MenuItem) => {
+      setResForm((prev) => ({
+        ...prev,
+        notes: prev.notes
+          ? `${prev.notes} • Pre-order request: ${dish.title}`
+          : `Pre-order request: ${dish.title}`,
+      }));
+      closeDishModal();
+      window.setTimeout(() => {
+        const section = document.getElementById("reservations");
+        section?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start",
+        });
+        document.getElementById("res-fullname")?.focus({ preventScroll: true });
+      }, 180);
+    },
+    [closeDishModal]
+  );
+
+  const handlePreSelectFeast = useCallback(
+    (feast: RoyalFeastMenu) => {
+      setResForm((prev) => ({
+        ...prev,
+        guests: feast.guestCount.includes("2")
+          ? "2 Guests"
+          : feast.guestCount.includes("4")
+          ? "4 Guests"
+          : "12+ VIP",
+        hallPreference: feast.recommendedHall,
+        notes: `Pre-selected Royal Feast: ${feast.title} (${feast.guestCount}, PKR ${feast.totalPricePkr.toLocaleString("en-PK")})`,
+      }));
+      const section = document.getElementById("reservations");
+      section?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start",
+      });
+      document.getElementById("res-fullname")?.focus({ preventScroll: true });
+    },
+    []
+  );
+
   const handleReservationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -1041,7 +1470,6 @@ export default function DastarkhwanApp() {
     });
 
     const isValid = form.checkValidity();
-
     controls.forEach((ctrl) => syncResField(ctrl));
 
     if (!isValid) {
@@ -1052,7 +1480,9 @@ export default function DastarkhwanApp() {
       window.clearTimeout(resSummaryTimer.current);
       resSummaryTimer.current = window.setTimeout(() => {
         setResLiveSummary(
-          `Reservation form needs attention in ${Math.max(1, invalidCount)} field${invalidCount > 1 ? "s" : ""}. Focus moved to ${firstInvalid?.dataset.label || "the first field"}.`
+          `Reservation form needs attention in ${Math.max(1, invalidCount)} field${
+            invalidCount > 1 ? "s" : ""
+          }. Focus moved to ${firstInvalid?.dataset.label || "the first field"}.`
         );
       }, 500);
       return;
@@ -1071,6 +1501,16 @@ export default function DastarkhwanApp() {
       notes: resForm.notes.trim(),
     });
   };
+
+  /* ---------------- Copy Reference & Calendar Integrations ---------------- */
+  const handleCopyCode = useCallback((ref: string) => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(ref).then(() => {
+        setCopiedCodeToast(true);
+        setTimeout(() => setCopiedCodeToast(false), 2200);
+      });
+    }
+  }, []);
 
   /* ---------------- Concierge Inquiry Form State & Validation ---------------- */
   const [inqForm, setInqForm] = useState<{
@@ -1186,6 +1626,16 @@ export default function DastarkhwanApp() {
     form.reset();
   };
 
+  /* ---------------- Floating VIP Dock Scroll Observer ---------------- */
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 400);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   /* ============================================================================
    * Render Complete Luxury Experience
    * ============================================================================ */
@@ -1273,6 +1723,12 @@ export default function DastarkhwanApp() {
           text-transform: uppercase;
           text-decoration: none;
           border-radius: 2px;
+          transform: translateY(-200%);
+          transition: transform 0.22s ease;
+        }
+        .dk-skip-link:focus,
+        .dk-skip-link:focus-visible {
+          transform: translateY(0);
         }
 
         :focus-visible {
@@ -1418,7 +1874,7 @@ export default function DastarkhwanApp() {
           transform: scaleX(1);
         }
 
-        /* ---------------- Buttons (Antique Burnished Royal Gold — Warm Bronze Depth) ---------------- */
+        /* ---------------- Buttons ---------------- */
         .dk-btn-gold {
           display: inline-flex;
           align-items: center;
@@ -1477,6 +1933,14 @@ export default function DastarkhwanApp() {
           box-shadow: 0 8px 24px rgba(198, 150, 44, 0.22);
         }
 
+        /* ---------------- Sound Equalizer Wave ---------------- */
+        @keyframes dk-eq-1 { 0%, 100% { height: 4px; } 50% { height: 14px; } }
+        @keyframes dk-eq-2 { 0%, 100% { height: 12px; } 50% { height: 5px; } }
+        @keyframes dk-eq-3 { 0%, 100% { height: 6px; } 50% { height: 16px; } }
+        .dk-eq-bar-1 { animation: dk-eq-1 0.8s ease-in-out infinite; }
+        .dk-eq-bar-2 { animation: dk-eq-2 0.65s ease-in-out infinite 0.1s; }
+        .dk-eq-bar-3 { animation: dk-eq-3 0.9s ease-in-out infinite 0.2s; }
+
         /* ---------------- Mobile Scroll-Snap Drawer (<dialog>) ---------------- */
         dialog.dk-drawer[open] {
           --drawer-width: min(84vw, 340px);
@@ -1530,12 +1994,12 @@ export default function DastarkhwanApp() {
           color: var(--dk-ivory);
         }
 
-        /* ---------------- Top-Layer Modal Dialog Transitions (Lightbox, Confirm, QR) ---------------- */
+        /* ---------------- Top-Layer Modal Dialog Transitions ---------------- */
         dialog.dk-modal {
           margin: auto;
           padding: 0;
           border: 1px solid rgba(212, 175, 55, 0.45);
-          border-radius: 3px;
+          border-radius: 4px;
           background: var(--dk-emerald-deep);
           color: var(--dk-ivory);
           max-width: min(92vw, 940px);
@@ -1648,25 +2112,29 @@ export default function DastarkhwanApp() {
           position: absolute;
           left: 0;
           right: 0;
-          bottom: -2px;
-          height: 3px;
-          background: linear-gradient(90deg, #D4AF37, #F2D779, #D4AF37);
-        }
-        @media (forced-colors: active) {
-          .dk-tab[aria-selected="true"]::after {
-            border-bottom: 2px solid Highlight;
-          }
+          bottom: -1px;
+          height: 2px;
+          background: var(--dk-gold);
         }
 
-        /* ---------------- Spice Indicator ---------------- */
+        /* ---------------- Card Hover Subtle Zoom & Shimmer ---------------- */
+        .dk-card-zoom img {
+          transition: transform 0.5s ease;
+        }
+        .dk-card-zoom:hover img {
+          transform: scale(1.04);
+        }
+
+        /* ---------------- Spice Indicator Pill ---------------- */
         .dk-spice-pill {
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          font-size: 0.72rem;
-          font-weight: 500;
-          letter-spacing: 0.05em;
-          color: rgba(248, 246, 237, 0.85);
+          font-size: 0.68rem;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: rgba(248, 246, 237, 0.78);
         }
         .dk-spice-flames {
           display: inline-flex;
@@ -1677,173 +2145,167 @@ export default function DastarkhwanApp() {
           color: var(--dk-gold);
         }
         .dk-flame-muted {
-          color: rgba(248, 246, 237, 0.24);
+          color: rgba(248, 246, 237, 0.22);
         }
 
-        /* ---------------- Accessible Form Controls (:user-invalid + fallback) ---------------- */
+        /* ---------------- Form Controls ---------------- */
         .dk-control {
           width: 100%;
-          min-height: 48px;
-          padding: 12px 15px;
-          font-family: var(--dk-font-sans);
-          font-size: max(1rem, 1em);
-          line-height: 1.4;
+          min-height: 46px;
+          padding: 10px 14px;
+          font-size: 0.88rem;
           border-radius: 2px;
           transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .dk-control--search {
-          padding-left: 2.75rem;
-          padding-right: 2.75rem;
-        }
-
         .dk-control--ivory {
-          background-color: #FFFFFF;
-          color: var(--dk-charcoal);
-          border: 1px solid rgba(26, 26, 26, 0.22);
-        }
-        .dk-control--ivory::placeholder {
-          color: #6B6B65;
+          background: #FFFFFF;
+          border: 1px solid rgba(26, 26, 26, 0.28);
+          color: #1A1A1A;
         }
         .dk-control--ivory:focus {
+          border-color: #0B3D2E;
+          box-shadow: 0 0 0 2px rgba(11, 61, 46, 0.22);
           outline: none;
-          border-color: var(--dk-emerald);
-          box-shadow: 0 0 0 3px rgba(11, 61, 46, 0.14);
         }
-        .dk-control--ivory:is(:user-invalid, .user-invalid-fallback) {
-          border-color: var(--dk-danger-ivory);
-          box-shadow: 0 0 0 3px rgba(143, 34, 24, 0.12);
-        }
-
         .dk-control--dark {
-          background-color: rgba(8, 47, 35, 0.9);
-          color: var(--dk-ivory);
-          border: 1px solid rgba(212, 175, 55, 0.42);
-        }
-        .dk-control--dark::placeholder {
-          color: rgba(248, 246, 237, 0.6);
+          background: #052017;
+          border: 1px solid rgba(212, 175, 55, 0.35);
+          color: #F8F6ED;
         }
         .dk-control--dark:focus {
-          outline: none;
           border-color: var(--dk-gold);
-          box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+          box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.28);
+          outline: none;
         }
-        .dk-control--dark:is(:user-invalid, .user-invalid-fallback) {
-          border-color: #F28B82;
-          box-shadow: 0 0 0 3px rgba(242, 139, 130, 0.16);
+        .dk-control--search {
+          padding-left: 36px;
         }
 
         .dk-field-error {
           display: block;
-          margin-top: 6px;
-          font-size: 0.79rem;
+          margin-top: 4px;
+          font-size: 0.74rem;
           font-weight: 500;
+          letter-spacing: 0.02em;
         }
         .dk-field-error--ivory {
           color: var(--dk-danger-ivory);
         }
         .dk-field-error--dark {
-          color: #F6A59D;
+          color: #F5A39B;
+        }
+
+        .user-invalid-fallback {
+          border-color: var(--dk-danger) !important;
+        }
+        :user-invalid {
+          border-color: var(--dk-danger) !important;
         }
 
         .dk-radio-card {
-          position: relative;
           display: flex;
           align-items: center;
           gap: 10px;
-          min-height: 48px;
-          padding: 10px 14px;
-          border: 1px solid rgba(26, 26, 26, 0.18);
+          padding: 12px 14px;
           background: #FFFFFF;
+          border: 1px solid rgba(26, 26, 26, 0.24);
           border-radius: 2px;
+          font-size: 0.82rem;
+          font-weight: 500;
+          color: #1A1A1A;
           cursor: pointer;
-          font-size: 0.88rem;
-          color: var(--dk-charcoal);
           transition: border-color 0.2s ease, background-color 0.2s ease;
         }
         .dk-radio-card:has(input:checked) {
-          border-color: var(--dk-emerald);
+          border-color: #0B3D2E;
           background-color: rgba(11, 61, 46, 0.06);
           font-weight: 600;
         }
-        .dk-radio-card--dark {
-          background: rgba(7, 41, 31, 0.72);
-          border-color: rgba(212, 175, 55, 0.28);
-          color: var(--dk-ivory);
-        }
-        .dk-radio-card--dark:has(input:checked) {
-          border-color: var(--dk-gold);
-          background: rgba(212, 175, 55, 0.14);
-        }
-
-        .dk-card-zoom img {
-          transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .dk-card-zoom:hover img {
-          transform: scale(1.045);
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .dk-card-zoom:hover img {
-            transform: none;
-          }
-        }
       `}</style>
 
-      {/* Accessible Skip Link */}
-      <a href="#main-content" className="dk-skip-link dk-visually-hidden">
+      {/* Accessible Top-Level Skip Link */}
+      <a href="#main-content" className="dk-skip-link">
         Skip to main content
       </a>
 
       {/* =====================================================================
-          SECTION A: GLOBAL UTILITY BAR & STICKY NAVIGATION
+          SECTION A: UTILITY BAR & HEADER
       ===================================================================== */}
-      <header>
-        <div className="dk-utility-bar">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-2 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+      <header className="relative z-30">
+        {/* Top Utility Ribbon */}
+        <div className="dk-utility-bar hidden py-2 sm:block">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-6">
               <span className="inline-flex items-center gap-2">
-                <MapPin size={13} strokeWidth={1.6} className="text-[#D4AF37]" aria-hidden="true" />
-                <span>{CONTACT.address}</span>
+                <MapPin size={13} className="text-[#D4AF37]" aria-hidden="true" />
+                <span>Clifton Block 4, Karachi</span>
               </span>
               <span className="hidden items-center gap-2 md:inline-flex">
-                <Clock size={13} strokeWidth={1.6} className="text-[#D4AF37]" aria-hidden="true" />
-                <span>{CONTACT.hoursPrimary}</span>
+                <Clock size={13} className="text-[#D4AF37]" aria-hidden="true" />
+                <span>Tue – Sun: 12:30 PM – 1:00 AM</span>
               </span>
             </div>
-            <div className="flex items-center gap-4">
+
+            <div className="flex items-center gap-5">
+              {/* Courtyard Soundscape Ambient Audio Toggle */}
+              <button
+                type="button"
+                onClick={toggleSound}
+                aria-pressed={soundActive}
+                aria-label={soundActive ? "Mute Royal Courtyard Ambience soundscape" : "Play Royal Courtyard Ambience soundscape"}
+                className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/45 bg-[#051F17] px-3 py-1 text-[11px] font-medium tracking-wider text-[#DFCFA6] transition hover:border-[#DFBE6F] hover:text-[#DFBE6F]"
+              >
+                {soundActive ? (
+                  <>
+                    <span className="inline-flex items-end gap-0.5 h-3">
+                      <span className="w-0.5 bg-[#D4AF37] dk-eq-bar-1" />
+                      <span className="w-0.5 bg-[#D4AF37] dk-eq-bar-2" />
+                      <span className="w-0.5 bg-[#D4AF37] dk-eq-bar-3" />
+                    </span>
+                    <span className="text-[#DFBE6F]">Soundscape: Playing</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 size={13} className="text-[#D4AF37]" aria-hidden="true" />
+                    <span>Courtyard Soundscape</span>
+                  </>
+                )}
+              </button>
+
               <a
                 href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`}
-                className="inline-flex items-center gap-1.5 text-[#F8F6ED] transition hover:text-[#D4AF37]"
+                className="inline-flex items-center gap-2 transition hover:text-[#D4AF37]"
               >
-                <Phone size={13} strokeWidth={1.6} className="text-[#D4AF37]" aria-hidden="true" />
+                <Phone size={13} className="text-[#D4AF37]" aria-hidden="true" />
                 <span>{CONTACT.phone}</span>
               </a>
             </div>
           </div>
         </div>
 
+        {/* Sticky Primary Glass Navigation */}
         <nav className="dk-sticky-nav" aria-label="Primary navigation">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3.5 sm:gap-4 sm:px-6 lg:px-8">
-            <a href="#home" aria-label="DASTARKHWAN — Return to top" className="min-w-0 shrink-0">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-3.5 lg:px-8">
+            <a href="#home" aria-label="DASTARKHWAN Home" className="flex items-center">
               <DastarkhwanLogo size="sm" />
             </a>
 
-            <ul className="hidden items-center gap-6 lg:flex xl:gap-8">
-              <li><a href="#home" className="dk-nav-link">Home</a></li>
-              <li><a href="#ethos" className="dk-nav-link">Our Story</a></li>
-              <li><a href="#menu" className="dk-nav-link">Menu</a></li>
-              <li><a href="#experience" className="dk-nav-link">Experience</a></li>
-              <li><a href="#ambience" className="dk-nav-link">Gallery</a></li>
-              <li><a href="#concierge" className="dk-nav-link">Contact</a></li>
-            </ul>
+            {/* Desktop Navigation Links */}
+            <div className="hidden items-center gap-8 lg:flex">
+              <a href="#home" className="dk-nav-link">Home</a>
+              <a href="#ethos" className="dk-nav-link">Our Story</a>
+              <a href="#menu" className="dk-nav-link">Menu</a>
+              <a href="#experience" className="dk-nav-link">Experience</a>
+              <a href="#ambience" className="dk-nav-link">Gallery</a>
+              <a href="#concierge" className="dk-nav-link">Contact</a>
+            </div>
 
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:inline-flex">
-                <a href="#reservations" className="dk-btn-gold">
-                  <Calendar size={14} strokeWidth={1.8} aria-hidden="true" />
-                  <span>Reserve a Table</span>
-                </a>
-              </span>
+            <div className="flex items-center gap-3.5">
+              <a href="#reservations" className="dk-btn-gold hidden sm:inline-flex">
+                <span>Reserve a Table</span>
+              </a>
 
+              {/* Mobile Drawer Toggle */}
               <button
                 type="button"
                 onClick={openDrawer}
@@ -1881,16 +2343,33 @@ export default function DastarkhwanApp() {
               </button>
             </div>
 
-            <nav aria-label="Mobile menu sections" className="mt-7">
+            {/* Mobile Soundscape Toggle */}
+            <div className="mt-5 border-b border-[#D4AF37]/20 pb-4">
+              <button
+                type="button"
+                onClick={toggleSound}
+                className="flex w-full items-center justify-between rounded-lg border border-[#D4AF37]/40 bg-[#052017] p-3 text-xs text-[#DFCFA6]"
+              >
+                <span className="flex items-center gap-2">
+                  <Volume2 size={16} className="text-[#D4AF37]" aria-hidden="true" />
+                  <span>Courtyard Sitar Ambience</span>
+                </span>
+                <span className="text-[11px] font-semibold uppercase text-[#D4AF37]">
+                  {soundActive ? "ON" : "OFF"}
+                </span>
+              </button>
+            </div>
+
+            <nav aria-label="Mobile menu sections" className="mt-6">
               <ul className="space-y-1">
                 {[
                   { href: "#home", label: "Home" },
                   { href: "#ethos", label: "Our Story" },
-                  { href: "#menu", label: "Menu" },
+                  { href: "#menu", label: "Curated Menu" },
                   { href: "#experience", label: "Experience" },
-                  { href: "#ambience", label: "Gallery" },
+                  { href: "#ambience", label: "Spaces & Gallery" },
                   { href: "#reservations", label: "Table Reservations" },
-                  { href: "#concierge", label: "Contact" },
+                  { href: "#concierge", label: "Contact & Location" },
                 ].map((link) => (
                   <li key={link.href}>
                     <button
@@ -1930,24 +2409,22 @@ export default function DastarkhwanApp() {
       ===================================================================== */}
       <main id="main">
         {/* ===================================================================
-            SECTION B: HERO — Split Left Editorial Copy & Right Plated Dining Artistry
+            SECTION B: HERO
         =================================================================== */}
         <section
           id="home"
           className="relative isolate flex min-h-[calc(100svh-104px)] items-center overflow-hidden bg-[#041812] py-20 sm:py-24"
         >
-          {/* Right-weighted Gourmet Culinary & Candlelight Background */}
           <img
             src="/images/dish-galouti.jpg"
             alt="Gourmet seared kebabs on crisp golden flatbread beside hammered brassware in warm candlelight at DASTARKHWAN"
             width={1600}
             height={1200}
-            fetchPriority="high"
+            {...({ fetchpriority: "high" } as any)}
             loading="eager"
             decoding="sync"
             className="absolute inset-0 -z-20 h-full w-full object-cover object-right opacity-95 saturate-[1.15] contrast-[1.06] lg:left-auto lg:w-[68%]"
           />
-          {/* Smooth Left Obsidian-Emerald Gradient Transition for Crisp Readability */}
           <div
             aria-hidden="true"
             className="absolute inset-0 -z-10 bg-gradient-to-r from-[#041812] via-[#041812]/80 to-transparent lg:via-[#041812]/85"
@@ -2002,35 +2479,14 @@ export default function DastarkhwanApp() {
         </section>
 
         {/* ===================================================================
-            SECTION C: WELCOME & PHILOSOPHY SPLIT (Warm Cream #F5EFE1)
+            SECTION C: WELCOME & PHILOSOPHY
         =================================================================== */}
         <section
           id="ethos"
           className="relative overflow-hidden bg-[#F5EFE1] py-20 text-[#1A1A1A] sm:py-24"
         >
-          {/* Delicate Engraved Mughal Arch Filigree Watermark */}
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 280 340"
-            fill="none"
-            className="pointer-events-none absolute -bottom-6 right-0 hidden h-[360px] w-[290px] text-[#9E731A] opacity-15 lg:block"
-          >
-            <path
-              d="M40 340V165C40 120 75 95 100 72C122 52 135 28 140 12C145 28 158 52 180 72C205 95 240 120 240 165V340"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <path
-              d="M62 340V172C62 134 90 112 112 92C128 77 137 60 140 48C143 60 152 77 168 92C190 112 218 134 218 172V340"
-              stroke="currentColor"
-              strokeWidth="1.1"
-            />
-            <path d="M14 340H266" stroke="currentColor" strokeWidth="1.5" />
-          </svg>
-
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-12 md:gap-10 lg:gap-16">
-              {/* Left Column: Candlelit Dining Salon Frame */}
               <div className="relative md:col-span-6">
                 <div className="overflow-hidden rounded-xl border border-[#C6962C]/55 bg-[#051F17] shadow-2xl">
                   <img
@@ -2045,27 +2501,33 @@ export default function DastarkhwanApp() {
                 </div>
               </div>
 
-              {/* Right Column: Editorial Copy & CTA */}
               <div className="md:col-span-6">
                 <div className="flex items-center gap-3">
+                  <span className="h-px w-10 bg-[#0B3D2E]" aria-hidden="true" />
                   <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0B3D2E]">
-                    Welcome to Dastarkhwan
+                    Our Philosophy
                   </p>
-                  <span className="h-px w-12 bg-[#C6962C]" aria-hidden="true" />
                 </div>
                 <h2 className="dk-font-display mt-3 text-3xl font-semibold leading-tight text-[#1A1A1A] sm:text-4xl lg:text-[2.65rem]">
-                  Where Every Meal Becomes a Memory.
+                  The Heart of Royal Pakistani Hospitality
                 </h2>
-
-                <p className="mt-5 text-sm leading-relaxed text-[#3E3E3A] sm:text-base">
-                  At Dastarkhwan, we bring people together through authentic Pakistani flavours, warm heartfelt
-                  hospitality, and unhurried dining experiences set in timeless comfort.
+                <p className="mt-5 text-sm leading-relaxed text-[#4A4A46] sm:text-base">
+                  At DASTARKHWAN, dining is an unhurried celebration. Born in Clifton, Karachi, our kitchen revives
+                  ancestral dum pukht slow cookery, charcoal live-fire grilling, and single-origin whole spice blends in
+                  an environment of tranquil royal elegance.
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-[#4A4A46] sm:text-base">
+                  Every signature entrée is crowned beneath a burnished golden cloche, unveiled at your setting with a
+                  fragrant bloom of steam and delicate saffron aroma.
                 </p>
 
-                <div className="mt-7">
-                  <a href="#experience" className="dk-btn-gold">
-                    <span>Discover Our Story</span>
+                <div className="mt-8 flex flex-wrap items-center gap-6">
+                  <a href="#menu" className="dk-btn-gold">
+                    <span>View Curated Menu</span>
                     <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
+                  </a>
+                  <a href="#ambience" className="text-xs font-semibold uppercase tracking-wider text-[#0B3D2E] hover:underline">
+                    Explore Dining Spaces →
                   </a>
                 </div>
               </div>
@@ -2074,209 +2536,400 @@ export default function DastarkhwanApp() {
         </section>
 
         {/* ===================================================================
-            SECTION D: OUR SIGNATURE FLAVOURS & INTERACTIVE MENU
+            SECTION D: CURATED MENU & ROYAL TASTING SOMMELIER
         =================================================================== */}
         <section
           id="menu"
-          className="dk-jali-surface border-t border-[#C6962C]/35 py-20 text-[#F8F6ED] sm:py-24"
+          className="dk-jali-surface border-t border-[#C6962C]/35 py-20 text-[#F8F6ED] sm:py-28"
         >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            {/* Centered Header with Flanked Metallic Gold Rules */}
             <div className="mx-auto max-w-2xl text-center">
-              <div className="flex items-center justify-center gap-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#D4AF37]">
+                A Modern Pakistani Feast
+              </p>
+              <div className="mt-3 flex items-center justify-center gap-4">
                 <span className="hidden h-px w-14 bg-gradient-to-r from-transparent to-[#C6962C] sm:inline-block" aria-hidden="true" />
                 <h2 className="dk-font-display text-3xl font-semibold text-[#F8F6ED] sm:text-4xl lg:text-[2.75rem]">
-                  Our Signature Flavours
+                  Our Curated Menu
                 </h2>
                 <span className="hidden h-px w-14 bg-gradient-to-l from-transparent to-[#C6962C] sm:inline-block" aria-hidden="true" />
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-[#E5DEC9]/90 sm:text-base">
-                A celebration of authentic flavours and contemporary presentation, crafted fresh to order.
+              <p className="mt-3 text-sm leading-relaxed text-[#E5DEC9]/85 sm:text-base">
+                Slow-cooked heirlooms, tender charcoal skewers, and aromatic saffron basmati—each crafted with reverence
+                to generational recipes.
               </p>
-            </div>
 
-            {/* Clean Search + Tabs Bar */}
-            <div className="mt-10 flex flex-col justify-between gap-4 border-b border-[#C6962C]/30 pb-6 lg:flex-row lg:items-end">
-              <div className="min-w-0 flex-1">
-                <div
-                  className={`dk-tablist-wrap ${fadeState.start ? "dk-tablist-wrap--fade-start" : ""} ${
-                    fadeState.end ? "dk-tablist-wrap--fade-end" : ""
+              {/* View Mode Switcher: À La Carte vs Royal Tasting Sommelier */}
+              <div className="mt-8 inline-flex items-center rounded-full border border-[#D4AF37]/50 bg-[#052017]/90 p-1.5 shadow-xl">
+                <button
+                  type="button"
+                  onClick={() => setMenuViewMode("dishes")}
+                  className={`rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                    menuViewMode === "dishes"
+                      ? "bg-[#D4AF37] text-[#101612] shadow-md"
+                      : "text-[#DFCFA6] hover:text-[#F8F6ED]"
                   }`}
                 >
-                  <div
-                    ref={tablistRef}
-                    role="tablist"
-                    aria-label="Curated menu categories"
-                    // @ts-expect-error progressive HTML attribute per W3C focusgroup spec
-                    focusgroup="tablist nomemory"
-                    className="dk-tablist border-b-0"
-                  >
-                    {MENU_CATEGORIES.map((cat, idx) => {
-                      const selected = activeCategory === cat.id;
-                      return (
+                  À La Carte (12 Dishes)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMenuViewMode("sommelier")}
+                  className={`inline-flex items-center gap-2 rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
+                    menuViewMode === "sommelier"
+                      ? "bg-[#D4AF37] text-[#101612] shadow-md"
+                      : "text-[#DFCFA6] hover:text-[#F8F6ED]"
+                  }`}
+                >
+                  <Sparkles size={13} className={menuViewMode === "sommelier" ? "text-[#101612]" : "text-[#D4AF37]"} aria-hidden="true" />
+                  <span>Royal Feast Sommelier</span>
+                </button>
+              </div>
+            </div>
+
+            {/* VIEW A: À LA CARTE DISHES */}
+            {menuViewMode === "dishes" && (
+              <>
+                {/* Category Tabs & Search Bar */}
+                <div className="mt-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div
+                      className={`dk-tablist-wrap ${fadeState.start ? "dk-tablist-wrap--fade-start" : ""} ${
+                        fadeState.end ? "dk-tablist-wrap--fade-end" : ""
+                      }`}
+                    >
+                      <div
+                        ref={tablistRef}
+                        role="tablist"
+                        aria-label="Curated menu categories"
+                        className="dk-tablist border-b-0"
+                      >
+                        {MENU_CATEGORIES.map((cat, idx) => {
+                          const selected = activeCategory === cat.id;
+                          return (
+                            <button
+                              key={cat.id}
+                              id={`tab-${cat.id}`}
+                              type="button"
+                              role="tab"
+                              aria-selected={selected}
+                              aria-controls="menu-tabpanel"
+                              tabIndex={selected ? 0 : -1}
+                              onClick={() => setActiveCategory(cat.id)}
+                              onKeyDown={(e) => handleTabKeyDown(e, idx)}
+                              className="dk-tab rounded-t-md"
+                            >
+                              <span className="block text-sm font-semibold tracking-wide">{cat.label}</span>
+                              <span className="block text-[11px] uppercase tracking-[0.14em] opacity-75">{cat.subLabel}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Search Landmark */}
+                  <search className="w-full shrink-0 lg:w-72">
+                    <label
+                      htmlFor="menu-search"
+                      className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#DFCFA6]"
+                    >
+                      Search Menu
+                    </label>
+                    <div className="relative">
+                      <Search
+                        size={16}
+                        strokeWidth={1.6}
+                        aria-hidden="true"
+                        className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#C6962C]"
+                      />
+                      <input
+                        id="menu-search"
+                        type="search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search Biryani, Nihari, Kebabs..."
+                        className="dk-control dk-control--dark dk-control--search"
+                      />
+                      {searchQuery && (
                         <button
-                          key={cat.id}
-                          id={`tab-${cat.id}`}
                           type="button"
-                          role="tab"
-                          aria-selected={selected}
-                          aria-controls="menu-tabpanel"
-                          tabIndex={selected ? 0 : -1}
-                          onClick={() => setActiveCategory(cat.id)}
-                          onKeyDown={(e) => handleTabKeyDown(e, idx)}
-                          className="dk-tab rounded-t-md"
+                          onClick={() => setSearchQuery("")}
+                          aria-label="Clear menu search"
+                          className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-sm text-[#D4AF37] hover:bg-[#D4AF37]/15"
                         >
-                          <span className="block text-sm font-semibold tracking-wide">{cat.label}</span>
-                          <span className="block text-[11px] uppercase tracking-[0.14em] opacity-75">{cat.subLabel}</span>
+                          <X size={15} strokeWidth={1.6} aria-hidden="true" />
                         </button>
-                      );
-                    })}
+                      )}
+                    </div>
+                  </search>
+                </div>
+
+                {/* Quick Heat Filter Pills */}
+                <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
+                  <span className="text-[11px] uppercase tracking-wider text-[#DFCFA6]/75">Spice Filter:</span>
+                  {(
+                    [
+                      { id: "all", label: "All Palates" },
+                      { id: 1, label: "Mild & Aromatic" },
+                      { id: 2, label: "Balanced Medium" },
+                      { id: 3, label: "Fiery Royal" },
+                    ] as const
+                  ).map((f) => (
+                    <button
+                      key={String(f.id)}
+                      type="button"
+                      onClick={() => setSpiceFilter(f.id)}
+                      className={`rounded-full px-3 py-1 text-[11px] font-medium transition ${
+                        spiceFilter === f.id
+                          ? "border border-[#D4AF37] bg-[#D4AF37]/20 text-[#DFBE6F]"
+                          : "border border-[#D4AF37]/20 bg-[#051E16] text-[#DFCFA6]/70 hover:border-[#D4AF37]/45"
+                      }`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Tab Panel Results Count */}
+                <div
+                  id="menu-tabpanel"
+                  role="tabpanel"
+                  aria-labelledby={`tab-${activeCategory}`}
+                  className="mt-8"
+                >
+                  <div className="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs text-[#F8F6ED]/75">
+                    <p aria-live="polite">
+                      Showing <strong className="font-semibold text-[#D4AF37]">{filteredMenu.length}</strong> curated{" "}
+                      {filteredMenu.length === 1 ? "course" : "courses"}
+                      {searchQuery.trim() ? ` matching “${searchQuery.trim()}”` : ""}
+                    </p>
+                    <span className="text-[11px] uppercase tracking-[0.16em] text-[#D4AF37]/85">
+                      Click any dish to explore heritage craft &amp; pairing
+                    </span>
+                  </div>
+
+                  {filteredMenu.length === 0 ? (
+                    <div className="border border-[#D4AF37]/30 bg-[#07291F] px-6 py-14 text-center">
+                      <UtensilsCrossed
+                        size={28}
+                        strokeWidth={1.4}
+                        className="mx-auto text-[#D4AF37]"
+                        aria-hidden="true"
+                      />
+                      <h3 className="dk-font-display mt-4 text-xl text-[#F8F6ED]">
+                        No courses match your current selection
+                      </h3>
+                      <p className="mx-auto mt-2 max-w-md text-sm text-[#F8F6ED]/75">
+                        Try clearing search terms or reset spice filters to explore all twelve selections.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery("");
+                          setActiveCategory("all");
+                          setSpiceFilter("all");
+                        }}
+                        className="dk-btn-glass mt-6"
+                      >
+                        Reset All Filters
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                      {filteredMenu.map((dish) => (
+                        <article
+                          key={dish.id}
+                          onClick={() => setSelectedDishModal(dish)}
+                          className="dk-card-zoom group flex cursor-pointer flex-col overflow-hidden rounded-xl border border-[#C6962C]/45 bg-[#051E16] shadow-[0_14px_34px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1.5 hover:border-[#DFBE6F] hover:shadow-[0_20px_44px_rgba(0,0,0,0.45),0_0_24px_rgba(198,150,44,0.16)]"
+                        >
+                          <div className="relative overflow-hidden bg-[#041812]">
+                            <img
+                              src={dish.image}
+                              alt={dish.imageAlt}
+                              width={800}
+                              height={600}
+                              loading="lazy"
+                              decoding="async"
+                              className="aspect-[4/3] w-full object-cover saturate-[1.12] contrast-[1.04]"
+                            />
+                            <div
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#051E16]/85 via-transparent to-transparent"
+                            />
+                            <span className="absolute left-3 top-3 rounded-full border border-[#C6962C]/55 bg-[#041812]/85 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#DFCFA6] backdrop-blur-sm">
+                              {dish.categoryLabel}
+                            </span>
+                            <span className="absolute right-3 top-3 rounded-full border border-[#C6962C]/45 bg-[#041812]/80 px-2 py-0.5 text-[10px] font-medium text-[#DFBE6F] opacity-0 transition group-hover:opacity-100">
+                              View Craft
+                            </span>
+                          </div>
+
+                          <div className="flex flex-1 flex-col justify-between p-5 text-center">
+                            <div>
+                              <h3 className="dk-font-display text-lg font-semibold leading-snug text-[#F8F6ED] transition group-hover:text-[#DFBE6F]">
+                                {dish.title}
+                              </h3>
+                              <p className="mt-1 font-serif text-xs italic text-[#DFCFA6]/90">
+                                {dish.tagline}
+                              </p>
+                              <p className="mt-3 text-xs leading-relaxed text-[#E5DEC9]/80">
+                                {dish.description}
+                              </p>
+                            </div>
+
+                            <div className="mt-4 pt-3">
+                              <div
+                                className="mx-auto mb-3 h-px w-16 bg-gradient-to-r from-transparent via-[#C6962C]/70 to-transparent"
+                                aria-hidden="true"
+                              />
+                              <div className="flex items-center justify-between gap-2 text-xs">
+                                <span className="font-semibold tracking-wider text-[#DFBE6F]">
+                                  PKR {dish.pricePkr.toLocaleString("en-PK")}
+                                </span>
+                                <SpiceRating level={dish.spiceLevel} label={dish.spiceLabel} />
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedDishModal(dish);
+                                }}
+                                className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded border border-[#D4AF37]/35 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-[#D4AF37] transition hover:border-[#D4AF37] hover:bg-[#D4AF37]/15"
+                              >
+                                <span>Story &amp; Pairing</span>
+                                <ChevronRight size={13} aria-hidden="true" />
+                              </button>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* VIEW B: ROYAL FEAST & TASTING SOMMELIER */}
+            {menuViewMode === "sommelier" && (
+              <div className="mt-12 space-y-10">
+                {/* Tasting Menu Selector Cards */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  {ROYAL_FEAST_MENUS.map((feast) => {
+                    const isSelected = feast.id === selectedFeastId;
+                    return (
+                      <button
+                        key={feast.id}
+                        type="button"
+                        onClick={() => setSelectedFeastId(feast.id)}
+                        className={`relative rounded-xl border p-5 text-left transition duration-200 ${
+                          isSelected
+                            ? "border-[#DFBE6F] bg-[#072F23] shadow-[0_12px_32px_rgba(212,175,55,0.18)] ring-1 ring-[#DFBE6F]"
+                            : "border-[#C6962C]/35 bg-[#051E16] hover:border-[#C6962C]/75"
+                        }`}
+                      >
+                        <span className="inline-block rounded-full border border-[#D4AF37]/50 bg-[#041812] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#DFBE6F]">
+                          {feast.badge}
+                        </span>
+                        <h3 className="dk-font-display mt-2 text-lg font-semibold text-[#F8F6ED]">
+                          {feast.title}
+                        </h3>
+                        <p className="mt-1 text-xs text-[#DFCFA6]/85">
+                          {feast.guestCount} • {feast.pacingMinutes} Mins
+                        </p>
+                        <p className="mt-3 text-sm font-semibold text-[#DFBE6F]">
+                          PKR {feast.totalPricePkr.toLocaleString("en-PK")}{" "}
+                          <span className="text-[11px] font-normal text-[#E5DEC9]/70">
+                            (~PKR {feast.pricePerGuestPkr.toLocaleString("en-PK")}/guest)
+                          </span>
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Detailed Active Tasting Menu Itinerary */}
+                <div className="overflow-hidden rounded-xl border border-[#DFBE6F]/60 bg-[#041E16] p-6 shadow-2xl sm:p-8">
+                  <div className="flex flex-col justify-between gap-4 border-b border-[#D4AF37]/25 pb-6 sm:flex-row sm:items-center">
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
+                        Curated Tasting Experience
+                      </span>
+                      <h3 className="dk-font-display mt-1 text-2xl font-semibold text-[#F8F6ED] sm:text-3xl">
+                        {activeFeast.title}
+                      </h3>
+                      <p className="mt-1 text-sm italic text-[#DFCFA6]">
+                        {activeFeast.tagline}
+                      </p>
+                    </div>
+
+                    <div className="text-left sm:text-right">
+                      <span className="block text-2xl font-bold text-[#DFBE6F]">
+                        PKR {activeFeast.totalPricePkr.toLocaleString("en-PK")}
+                      </span>
+                      <span className="text-xs text-[#E5DEC9]/80">
+                        {activeFeast.guestCount} • Includes Tableside Cloche Presentation
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="mt-5 text-sm leading-relaxed text-[#E5DEC9]/90">
+                    {activeFeast.description}
+                  </p>
+
+                  {/* Course Timeline */}
+                  <div className="mt-8 space-y-4">
+                    <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
+                      Course Progression &amp; Culinary Craft
+                    </h4>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      {activeFeast.courses.map((c, i) => (
+                        <div
+                          key={i}
+                          className="rounded-lg border border-[#C6962C]/30 bg-[#06261B] p-4 text-xs"
+                        >
+                          <span className="font-semibold uppercase tracking-wider text-[#D4AF37]">
+                            {c.courseTitle}
+                          </span>
+                          <h5 className="dk-font-display mt-1 text-base font-medium text-[#F8F6ED]">
+                            {c.dishTitle}
+                          </h5>
+                          <p className="mt-1.5 leading-relaxed text-[#E5DEC9]/80">
+                            {c.craftNote}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 border-t border-[#D4AF37]/20 pt-5">
+                    <p className="text-xs italic text-[#DFCFA6]">
+                      <strong className="font-semibold text-[#D4AF37]">Chef&apos;s Royal Touch:</strong>{" "}
+                      {activeFeast.chefSignatureTouch}
+                    </p>
+                  </div>
+
+                  <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-4 text-xs text-[#F8F6ED]/75">
+                      <span>• Recommended Hall: <strong className="text-[#D4AF37]">{activeFeast.recommendedHall}</strong></span>
+                      <span>• Pacing: <strong className="text-[#D4AF37]">{activeFeast.pacingMinutes} mins</strong></span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handlePreSelectFeast(activeFeast)}
+                      className="dk-btn-gold"
+                    >
+                      <Sparkles size={16} aria-hidden="true" />
+                      <span>Pre-Select This Feast for Reservation</span>
+                    </button>
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* Search Landmark (<search>) */}
-              <search className="w-full shrink-0 lg:w-72">
-                <label
-                  htmlFor="menu-search"
-                  className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.16em] text-[#DFCFA6]"
-                >
-                  Search Menu
-                </label>
-                <div className="relative">
-                  <Search
-                    size={16}
-                    strokeWidth={1.6}
-                    aria-hidden="true"
-                    className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#C6962C]"
-                  />
-                  <input
-                    id="menu-search"
-                    type="search"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search Biryani, Nihari, Kebabs..."
-                    className="dk-control dk-control--dark dk-control--search"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery("")}
-                      aria-label="Clear menu search"
-                      className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-sm text-[#D4AF37] hover:bg-[#D4AF37]/15"
-                    >
-                      <X size={15} strokeWidth={1.6} aria-hidden="true" />
-                    </button>
-                  )}
-                </div>
-              </search>
-            </div>
-
-            {/* Tab Panel Results Count */}
-            <div
-              id="menu-tabpanel"
-              role="tabpanel"
-              aria-labelledby={`tab-${activeCategory}`}
-              className="mt-8"
-            >
-              <div className="mb-6 flex flex-wrap items-center justify-between gap-3 text-xs text-[#F8F6ED]/75">
-                <p aria-live="polite">
-                  Showing <strong className="font-semibold text-[#D4AF37]">{filteredMenu.length}</strong> curated{" "}
-                  {filteredMenu.length === 1 ? "course" : "courses"}
-                  {searchQuery.trim() ? ` matching “${searchQuery.trim()}”` : ""}
-                </p>
-                <span className="text-[11px] uppercase tracking-[0.16em] text-[#D4AF37]/85">
-                  All prices in PKR • Applicable taxes exclusive
-                </span>
-              </div>
-
-              {filteredMenu.length === 0 ? (
-                <div className="border border-[#D4AF37]/30 bg-[#07291F] px-6 py-14 text-center">
-                  <UtensilsCrossed
-                    size={28}
-                    strokeWidth={1.4}
-                    className="mx-auto text-[#D4AF37]"
-                    aria-hidden="true"
-                  />
-                  <h3 className="dk-font-display mt-4 text-xl text-[#F8F6ED]">
-                    No courses match your current selection
-                  </h3>
-                  <p className="mx-auto mt-2 max-w-md text-sm text-[#F8F6ED]/75">
-                    Try searching for heirloom dishes such as Nihari, Shinwari Karahi, Biryani, or reset to explore all
-                    twelve selections.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setActiveCategory("all");
-                    }}
-                    className="dk-btn-glass mt-6"
-                  >
-                    Reset Filters
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                  {filteredMenu.map((dish) => (
-                    <article
-                      key={dish.id}
-                      className="dk-card-zoom group flex flex-col overflow-hidden rounded-xl border border-[#C6962C]/45 bg-[#051E16] shadow-[0_14px_34px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1.5 hover:border-[#DFBE6F] hover:shadow-[0_20px_44px_rgba(0,0,0,0.45),0_0_24px_rgba(198,150,44,0.16)]"
-                    >
-                      {/* Clean Full-Bleed Food Photo */}
-                      <div className="relative overflow-hidden bg-[#041812]">
-                        <img
-                          src={dish.image}
-                          alt={dish.imageAlt}
-                          width={800}
-                          height={600}
-                          loading="lazy"
-                          decoding="async"
-                          className="aspect-[4/3] w-full object-cover saturate-[1.12] contrast-[1.04]"
-                        />
-                        <div
-                          aria-hidden="true"
-                          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#051E16]/85 via-transparent to-transparent"
-                        />
-                        <span className="absolute left-3 top-3 rounded-full border border-[#C6962C]/55 bg-[#041812]/85 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.12em] text-[#DFCFA6] backdrop-blur-sm">
-                          {dish.categoryLabel}
-                        </span>
-                      </div>
-
-                      {/* Clean Minimal Editorial Card Body */}
-                      <div className="flex flex-1 flex-col justify-between p-5 text-center">
-                        <div>
-                          <h3 className="dk-font-display text-lg font-semibold leading-snug text-[#F8F6ED] transition group-hover:text-[#DFBE6F]">
-                            {dish.title}
-                          </h3>
-                          <p className="mt-1 font-serif text-xs italic text-[#DFCFA6]/90">
-                            {dish.tagline}
-                          </p>
-                          <p className="mt-3 text-xs leading-relaxed text-[#E5DEC9]/80">
-                            {dish.description}
-                          </p>
-                        </div>
-
-                        <div className="mt-4 pt-3">
-                          <div
-                            className="mx-auto mb-3 h-px w-16 bg-gradient-to-r from-transparent via-[#C6962C]/70 to-transparent"
-                            aria-hidden="true"
-                          />
-                          <div className="flex items-center justify-between gap-2 text-xs">
-                            <span className="font-semibold tracking-wider text-[#DFBE6F]">
-                              PKR {dish.pricePkr.toLocaleString("en-PK")}
-                            </span>
-                            <SpiceRating level={dish.spiceLevel} label={dish.spiceLabel} />
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Subtle Phase 3 Preview Strip */}
+            {/* Tableside QR Digital Menu Strip */}
             <div className="mt-14 flex flex-col items-start justify-between gap-6 rounded-xl border border-[#C6962C]/45 bg-[#051E16]/95 bg-[radial-gradient(ellipse_at_right,rgba(198,150,44,0.12)_0%,transparent_65%)] p-6 shadow-xl sm:flex-row sm:items-center sm:p-8">
               <div className="flex items-start gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[#C6962C]/55 bg-[#082B20] text-[#D4AF37]">
@@ -2284,14 +2937,14 @@ export default function DastarkhwanApp() {
                 </div>
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D4AF37]">
-                    In-Salon Digital Dining • Phase III Preview
+                    In-Salon Digital Dining • Tableside Service
                   </p>
                   <h3 className="dk-font-display mt-1 text-xl font-semibold text-[#F8F6ED]">
                     Tableside QR Menu &amp; Preference Service
                   </h3>
                   <p className="mt-1 max-w-2xl text-xs leading-relaxed text-[#E5DEC9]/85 sm:text-sm">
-                    Soon at every table: scan the brass table emblem to customize spice levels, request fresh tea
-                    pairings, and pace your courses seamlessly.
+                    At every table: scan the brass table emblem to customize grill sear, request fresh pink tea pairings,
+                    and pace your courses seamlessly.
                   </p>
                 </div>
               </div>
@@ -2307,7 +2960,7 @@ export default function DastarkhwanApp() {
         </section>
 
         {/* ===================================================================
-            SECTION E: EXPERIENCE BANNER ("More Than Just a Meal")
+            SECTION E: EXPERIENCE BANNER
         =================================================================== */}
         <section
           id="experience"
@@ -2349,142 +3002,95 @@ export default function DastarkhwanApp() {
                     note: "Whole roasted spices & slow-simmered recipes.",
                   },
                   {
-                    icon: Users,
-                    title: "Moments Worth Sharing",
-                    note: "Crafted for family milestones & quiet evenings.",
+                    icon: Heart,
+                    title: "Immersive Ambience",
+                    note: "Regal emerald salons and candlelit courtyard breezes.",
                   },
-                ].map((pillar) => {
-                  const Icon = pillar.icon;
+                ].map((item, idx) => {
+                  const Icon = item.icon;
                   return (
                     <div
-                      key={pillar.title}
-                      className="border-l border-[#C6962C]/55 pl-5"
+                      key={idx}
+                      className="rounded-lg border border-[#C6962C]/40 bg-[#041A13]/85 p-5 backdrop-blur-sm"
                     >
-                      <Icon size={24} strokeWidth={1.5} className="text-[#D4AF37]" aria-hidden="true" />
+                      <Icon size={20} className="text-[#D4AF37]" aria-hidden="true" />
                       <h3 className="dk-font-display mt-3 text-lg font-semibold text-[#F8F6ED]">
-                        {pillar.title}
+                        {item.title}
                       </h3>
-                      <p className="mt-1 text-xs leading-relaxed text-[#DFCFA6]/85">
-                        {pillar.note}
+                      <p className="mt-1 text-xs text-[#E5DEC9]/80">
+                        {item.note}
                       </p>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* ===================================================================
-            SECTION F: CULINARY STORY SPLIT (Light Warm Cream #F5EFE1)
-        =================================================================== */}
-        <section className="relative overflow-hidden bg-[#F5EFE1] py-20 text-[#1A1A1A] sm:py-24">
-          {/* Subtle Engraved Architectural Mosque Dome Silhouette Watermark */}
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 360 240"
-            fill="none"
-            className="pointer-events-none absolute -bottom-2 right-0 hidden h-[240px] w-[360px] text-[#9E731A] opacity-15 lg:block"
-          >
-            <path d="M20 230H340" stroke="currentColor" strokeWidth="1.4" />
-            <path d="M55 230V135H95V230M75 135V82M65 82H85M75 64V82" stroke="currentColor" strokeWidth="1.2" />
-            <path
-              d="M115 230V155H245V230M135 155C135 112 162 96 180 78C198 96 225 112 225 155"
-              stroke="currentColor"
-              strokeWidth="1.4"
-            />
-            <path d="M180 60V78M265 230V125H305V230M285 125V72M285 54V72" stroke="currentColor" strokeWidth="1.2" />
-          </svg>
-
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-12 md:gap-10 lg:gap-16">
-              {/* Left Column: Burnished Cloche Emblem Showcase */}
-              <div className="relative md:col-span-6">
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -bottom-4 -right-4 hidden h-full w-full rounded-xl border border-[#C6962C]/60 sm:block"
-                />
-                <div className="relative overflow-hidden rounded-xl border border-[#C6962C]/50 bg-[#051F17] shadow-2xl">
-                  <img
-                    src="/images/cloche-emblem.png"
-                    alt="Burnished antique gold cloche emblem representing tableside service at DASTARKHWAN"
-                    width={960}
-                    height={720}
-                    loading="lazy"
-                    decoding="async"
-                    className="aspect-[4/3] w-full object-cover"
-                  />
-                  <div className="border-t border-[#C6962C]/35 bg-[#06241B] px-6 py-4 text-[#F8F6ED]">
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
-                        Signature Service
-                      </span>
-                      <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#DFCFA6]">
-                        Clifton, Karachi
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Clean Simple Story */}
-              <div className="md:col-span-6">
-                <div className="flex items-center gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0B3D2E]">
-                    Our Craft
-                  </p>
-                  <span className="h-px w-12 bg-[#C6962C]" aria-hidden="true" />
-                </div>
-                <h2 className="dk-font-display mt-3 text-3xl font-semibold leading-tight text-[#1A1A1A] sm:text-4xl lg:text-[2.65rem]">
-                  Rooted in Tradition.
-                  <br />
-                  Crafted for Today.
-                </h2>
-
-                <div className="mt-5 space-y-4 text-sm leading-relaxed text-[#3E3E3A] sm:text-base">
-                  <p>
-                    A journey of flavours, culture, and quiet passion—where classic family recipes meet modern fine
-                    dining.
-                  </p>
-                  <p>
-                    From freshly toasted whole spices every morning to sealed clay-pot slow braising over live hardwood
-                    coals, every dish arrives with authentic warmth and care.
-                  </p>
-                </div>
-
-                <div className="mt-8">
-                  <a href="#ambience" className="dk-btn-gold">
-                    <span>Explore Our Spaces</span>
-                    <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
-                  </a>
-                </div>
+              <div className="mt-10">
+                <a href="#reservations" className="dk-btn-gold">
+                  <span>Plan an Unforgettable Evening</span>
+                  <ArrowRight size={15} strokeWidth={2} aria-hidden="true" />
+                </a>
               </div>
             </div>
           </div>
         </section>
 
         {/* ===================================================================
-            SECTION G: A GLIMPSE INTO OUR WORLD (Lightbox Gallery on Cream #F6F2E6)
+            SECTION F: SPACES & ATMOSPHERE (With Day/Night Lighting Mode)
         =================================================================== */}
         <section
           id="ambience"
-          className="border-t border-[#C6962C]/25 bg-[#F6F2E6] py-20 text-[#1A1A1A] sm:py-24"
+          className={`border-t border-[#C6962C]/25 py-20 transition-colors duration-500 sm:py-24 ${
+            ambienceLighting === "twilight" ? "bg-[#F6F2E6] text-[#1A1A1A]" : "bg-[#041912] text-[#F8F6ED]"
+          }`}
         >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0B3D2E]">
+              <p className={`text-xs font-semibold uppercase tracking-[0.24em] ${
+                ambienceLighting === "twilight" ? "text-[#0B3D2E]" : "text-[#D4AF37]"
+              }`}>
                 Spaces &amp; Atmosphere
               </p>
               <div className="mt-3 flex items-center justify-center gap-4">
                 <span className="hidden h-px w-12 bg-[#C6962C]/75 sm:inline-block" aria-hidden="true" />
-                <h2 className="dk-font-display text-3xl font-semibold text-[#1A1A1A] sm:text-4xl lg:text-[2.75rem]">
+                <h2 className="dk-font-display text-3xl font-semibold sm:text-4xl lg:text-[2.75rem]">
                   A Glimpse Into Our World
                 </h2>
                 <span className="hidden h-px w-12 bg-[#C6962C]/75 sm:inline-block" aria-hidden="true" />
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-[#4A4A46] sm:text-base">
-                Select any space below to take a closer look or reserve that specific dining area for your party.
+              <p className={`mt-3 text-sm leading-relaxed sm:text-base ${
+                ambienceLighting === "twilight" ? "text-[#4A4A46]" : "text-[#E5DEC9]/80"
+              }`}>
+                Select any space to take a closer look or pre-select that dining area for your table reservation.
               </p>
+
+              {/* Day / Night Mood Simulator Switcher */}
+              <div className="mt-6 inline-flex items-center rounded-full border border-[#D4AF37]/50 bg-[#052017] p-1 text-xs shadow-md">
+                <button
+                  type="button"
+                  onClick={() => setAmbienceLighting("twilight")}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition ${
+                    ambienceLighting === "twilight"
+                      ? "bg-[#D4AF37] text-[#101612]"
+                      : "text-[#DFCFA6] hover:text-[#F8F6ED]"
+                  }`}
+                >
+                  <Sun size={13} aria-hidden="true" />
+                  <span>Sunset Twilight (5:30 PM)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAmbienceLighting("midnight")}
+                  className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-medium transition ${
+                    ambienceLighting === "midnight"
+                      ? "bg-[#D4AF37] text-[#101612]"
+                      : "text-[#DFCFA6] hover:text-[#F8F6ED]"
+                  }`}
+                >
+                  <Moon size={13} aria-hidden="true" />
+                  <span>Royal Midnight (9:30 PM)</span>
+                </button>
+              </div>
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -2494,7 +3100,7 @@ export default function DastarkhwanApp() {
                   type="button"
                   onClick={() => setLightboxIndex(idx)}
                   aria-label={`Inspect ${spot.title} — ${spot.subtitle}`}
-                  className="dk-card-zoom group relative overflow-hidden rounded-xl border border-[#C6962C]/55 bg-[#052017] text-left shadow-xl transition duration-300 hover:-translate-y-1.5 hover:border-[#C6962C] hover:shadow-2xl"
+                  className="dk-card-zoom group relative overflow-hidden rounded-xl border border-[#C6962C]/55 bg-[#052017] text-left shadow-xl transition duration-300 hover:-translate-y-1.5 hover:border-[#DFBE6F] hover:shadow-2xl"
                 >
                   <div className="relative overflow-hidden">
                     <img
@@ -2521,7 +3127,9 @@ export default function DastarkhwanApp() {
                     <h3 className="dk-font-display mt-1 text-xl font-semibold text-[#F8F6ED] transition group-hover:text-[#DFBE6F]">
                       {spot.title}
                     </h3>
-                    <p className="mt-1.5 text-xs text-[#E5DEC9]/85">{spot.sensoryNote}</p>
+                    <p className="mt-1.5 text-xs text-[#E5DEC9]/85">
+                      {ambienceLighting === "twilight" ? spot.twilightNote : spot.midnightNote}
+                    </p>
                   </div>
                 </button>
               ))}
@@ -2530,7 +3138,7 @@ export default function DastarkhwanApp() {
         </section>
 
         {/* ===================================================================
-            SECTION H: WORDS FROM OUR GUESTS (Interactive Carousel + Cards on Emerald Jali)
+            SECTION G: GUEST IMPRESSIONS
         =================================================================== */}
         <section className="dk-jali-surface border-t border-[#C6962C]/35 py-20 text-[#F8F6ED] sm:py-24">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -2590,40 +3198,7 @@ export default function DastarkhwanApp() {
         </section>
 
         {/* ===================================================================
-            AMBIENT BANNER: "Your Table Awaits"
-        =================================================================== */}
-        <section className="relative isolate overflow-hidden border-t border-[#C6962C]/35 bg-[#041812] py-16 text-center text-[#F8F6ED] sm:py-20">
-          <img
-            src="/images/hero-salon.jpg"
-            alt="Candlelit table setting prepared for evening dinner service"
-            width={1600}
-            height={900}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 -z-20 h-full w-full object-cover object-center opacity-45 saturate-[1.15]"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 -z-10 bg-gradient-to-b from-[#041812]/80 via-[#041812]/65 to-[#041812]/90"
-          />
-          <div className="mx-auto max-w-2xl px-4 sm:px-6">
-            <h2 className="dk-font-display text-3xl font-semibold text-[#F8F6ED] sm:text-4xl">
-              Your Table Awaits
-            </h2>
-            <p className="mt-2 text-sm text-[#E5DEC9]/90 sm:text-base">
-              Make room for good food and great moments.
-            </p>
-            <div className="mt-7">
-              <a href="#reservations" className="dk-btn-gold">
-                <Calendar size={15} strokeWidth={1.8} aria-hidden="true" />
-                <span>Reserve Your Table</span>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* ===================================================================
-            SECTION G: TABLE RESERVATION ENGINE (Warm Ivory Contrast Surface)
+            SECTION H: TABLE RESERVATION ENGINE
         =================================================================== */}
         <section id="reservations" className="bg-[#F8F6ED] py-20 text-[#1A1A1A] sm:py-28">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
@@ -2646,7 +3221,6 @@ export default function DastarkhwanApp() {
               onSubmit={handleReservationSubmit}
               className="mt-12 rounded-lg border border-[#D4AF37]/65 bg-[#EFEBD9]/75 p-6 shadow-md sm:p-10"
             >
-              {/* Single Centralized Screen-Reader Polite Error Summary */}
               <div className="dk-visually-hidden" aria-live="polite" aria-atomic="true">
                 {resLiveSummary}
               </div>
@@ -2657,9 +3231,6 @@ export default function DastarkhwanApp() {
                   <label htmlFor="res-fullname" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#1A1A1A]">
                     Full Name <span aria-hidden="true" className="text-[#8F2218]">*</span>
                   </label>
-                  <p id="res-fullname-hint" className="mt-1 text-xs text-[#4A4A46]">
-                    As addressed at our reception desk.
-                  </p>
                   <input
                     id="res-fullname"
                     name="fullName"
@@ -2670,28 +3241,25 @@ export default function DastarkhwanApp() {
                     value={resForm.fullName}
                     onChange={(e) => setResForm((p) => ({ ...p, fullName: e.target.value }))}
                     data-label="Full Name"
-                    data-base-describedby="res-fullname-hint"
-                    data-error-id="res-fullname-error"
-                    aria-describedby="res-fullname-hint"
+                    data-base-describedby="res-name-hint"
+                    data-error-id="res-name-error"
+                    aria-describedby="res-name-hint"
                     aria-invalid="false"
                     placeholder="e.g. Tariq Mahmood"
                     className="dk-control dk-control--ivory mt-2"
                   />
                   {resErrors.fullName && (
-                    <span id="res-fullname-error" className="dk-field-error dk-field-error--ivory">
+                    <span id="res-name-error" className="dk-field-error dk-field-error--ivory">
                       {resErrors.fullName}
                     </span>
                   )}
                 </div>
 
-                {/* WhatsApp / Phone Number */}
+                {/* WhatsApp Phone */}
                 <div>
                   <label htmlFor="res-phone" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#1A1A1A]">
-                    WhatsApp / Phone Number <span aria-hidden="true" className="text-[#8F2218]">*</span>
+                    WhatsApp / Phone <span aria-hidden="true" className="text-[#8F2218]">*</span>
                   </label>
-                  <p id="res-phone-hint" className="mt-1 text-xs text-[#4A4A46]">
-                    Used exclusively for your 15-minute table confirmation.
-                  </p>
                   <input
                     id="res-phone"
                     name="phone"
@@ -2716,14 +3284,11 @@ export default function DastarkhwanApp() {
                   )}
                 </div>
 
-                {/* Number of Guests (<select> for 6+ options) */}
+                {/* Party Size */}
                 <div>
                   <label htmlFor="res-guests" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#1A1A1A]">
                     Number of Guests <span aria-hidden="true" className="text-[#8F2218]">*</span>
                   </label>
-                  <p id="res-guests-hint" className="mt-1 text-xs text-[#4A4A46]">
-                    Parties of 12+ qualify for a dedicated butler alcove.
-                  </p>
                   <select
                     id="res-guests"
                     name="guests"
@@ -2737,9 +3302,7 @@ export default function DastarkhwanApp() {
                     aria-invalid="false"
                     className="dk-control dk-control--ivory mt-2"
                   >
-                    <option value="" disabled>
-                      Select party size
-                    </option>
+                    <option value="" disabled>Select party size</option>
                     <option value="1 Guest">1 Guest (Solo Table)</option>
                     <option value="2 Guests">2 Guests (Intimate Table)</option>
                     <option value="4 Guests">4 Guests (Family Table)</option>
@@ -2759,26 +3322,21 @@ export default function DastarkhwanApp() {
                   <label htmlFor="res-date" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#1A1A1A]">
                     Dining Date <span aria-hidden="true" className="text-[#8F2218]">*</span>
                   </label>
-                  <p id="res-date-hint" className="mt-1 text-xs text-[#4A4A46]">
-                    Open Tuesday through Sunday; closed Mondays for spice roasting.
-                  </p>
-                  <div className="relative mt-2">
-                    <input
-                      id="res-date"
-                      name="date"
-                      type="date"
-                      required
-                      min={todayIso}
-                      value={resForm.date}
-                      onChange={(e) => setResForm((p) => ({ ...p, date: e.target.value }))}
-                      data-label="Dining Date"
-                      data-base-describedby="res-date-hint"
-                      data-error-id="res-date-error"
-                      aria-describedby="res-date-hint"
-                      aria-invalid="false"
-                      className="dk-control dk-control--ivory"
-                    />
-                  </div>
+                  <input
+                    id="res-date"
+                    name="date"
+                    type="date"
+                    required
+                    min={todayIso}
+                    value={resForm.date}
+                    onChange={(e) => setResForm((p) => ({ ...p, date: e.target.value }))}
+                    data-label="Dining Date"
+                    data-base-describedby="res-date-hint"
+                    data-error-id="res-date-error"
+                    aria-describedby="res-date-hint"
+                    aria-invalid="false"
+                    className="dk-control dk-control--ivory mt-2"
+                  />
                   {resErrors.date && (
                     <span id="res-date-error" className="dk-field-error dk-field-error--ivory">
                       {resErrors.date}
@@ -2787,7 +3345,7 @@ export default function DastarkhwanApp() {
                 </div>
               </div>
 
-              {/* Seating Time Slot Fieldset (4 Radios) */}
+              {/* Seating Time Slot */}
               <fieldset className="mt-8 border-0 p-0">
                 <legend className="text-xs font-semibold uppercase tracking-[0.14em] text-[#1A1A1A]">
                   Seating Time Slot <span aria-hidden="true" className="text-[#8F2218]">*</span>
@@ -2817,7 +3375,7 @@ export default function DastarkhwanApp() {
                 </div>
               </fieldset>
 
-              {/* Hall Preference Fieldset (3 Radios — Pre-selectable from Lightbox) */}
+              {/* Hall Preference */}
               <fieldset className="mt-7 border-0 p-0">
                 <legend className="text-xs font-semibold uppercase tracking-[0.14em] text-[#1A1A1A]">
                   Hall Preference <span aria-hidden="true" className="text-[#8F2218]">*</span>
@@ -2858,23 +3416,18 @@ export default function DastarkhwanApp() {
                 </div>
               </fieldset>
 
-              {/* Special Requests & Dietary Notes */}
+              {/* Special Requests */}
               <div className="mt-7">
                 <label htmlFor="res-notes" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#1A1A1A]">
                   Special Requests &amp; Dietary Notes <span className="font-normal text-[#4A4A46]">(Optional)</span>
                 </label>
-                <p id="res-notes-hint" className="mt-1 text-xs text-[#4A4A46]">
-                  Allergies, anniversary table arrangements, high-chair requests, or pre-ordered signature courses.
-                </p>
                 <textarea
                   id="res-notes"
                   name="notes"
                   rows={3}
                   value={resForm.notes}
                   onChange={(e) => setResForm((p) => ({ ...p, notes: e.target.value }))}
-                  aria-describedby="res-notes-hint"
-                  aria-invalid="false"
-                  placeholder="Share celebration details or allergy sensitivities..."
+                  placeholder="Share celebration details, pre-ordered signature dishes, or allergy sensitivities..."
                   className="dk-control dk-control--ivory mt-2"
                 />
               </div>
@@ -2893,7 +3446,7 @@ export default function DastarkhwanApp() {
         </section>
 
         {/* ===================================================================
-            SECTION H: CONCIERGE & LOCATION
+            SECTION I: CONCIERGE & LOCATION
         =================================================================== */}
         <section
           id="concierge"
@@ -2901,7 +3454,6 @@ export default function DastarkhwanApp() {
         >
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
-              {/* Left Column: Address, Telephone, WhatsApp, Email, Service Hours */}
               <div className="lg:col-span-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.26em] text-[#D4AF37]">
                   Flagship Venue
@@ -2918,9 +3470,7 @@ export default function DastarkhwanApp() {
                   <div className="flex items-start gap-3.5">
                     <MapPin size={18} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#D4AF37]" aria-hidden="true" />
                     <div>
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
-                        Flagship Address
-                      </dt>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">Flagship Address</dt>
                       <dd className="mt-1 text-[#F8F6ED]">{CONTACT.address}</dd>
                     </div>
                   </div>
@@ -2928,9 +3478,7 @@ export default function DastarkhwanApp() {
                   <div className="flex items-start gap-3.5">
                     <Phone size={18} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#D4AF37]" aria-hidden="true" />
                     <div>
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
-                        Direct Concierge Desk
-                      </dt>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">Direct Concierge Desk</dt>
                       <dd className="mt-1">
                         <a href={`tel:${CONTACT.phone.replace(/\s+/g, "")}`} className="hover:text-[#D4AF37]">
                           {CONTACT.phone}
@@ -2940,138 +3488,104 @@ export default function DastarkhwanApp() {
                   </div>
 
                   <div className="flex items-start gap-3.5">
-                    <MessageCircle
-                      size={18}
-                      strokeWidth={1.5}
-                      className="mt-0.5 shrink-0 text-[#D4AF37]"
-                      aria-hidden="true"
-                    />
+                    <MessageCircle size={18} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#D4AF37]" aria-hidden="true" />
                     <div>
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
-                        WhatsApp Reservations
-                      </dt>
-                      <dd className="mt-1 text-[#F8F6ED]">{CONTACT.whatsapp}</dd>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3.5">
-                    <Mail size={18} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#D4AF37]" aria-hidden="true" />
-                    <div>
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
-                        Private Events &amp; Press
-                      </dt>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">WhatsApp VIP Concierge</dt>
                       <dd className="mt-1">
-                        <a href={`mailto:${CONTACT.email}`} className="hover:text-[#D4AF37]">
-                          {CONTACT.email}
+                        <a
+                          href={`https://wa.me/923000000000?text=${encodeURIComponent(
+                            "Assalam-o-Alaikum Dastarkhwan Concierge, I would like to inquire about reserving a table at your Clifton flagship."
+                          )}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:text-[#D4AF37]"
+                        >
+                          {CONTACT.whatsapp} (Direct VIP Assistant)
                         </a>
                       </dd>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3.5">
-                    <Clock size={18} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#D4AF37]" aria-hidden="true" />
+                    <Mail size={18} strokeWidth={1.5} className="mt-0.5 shrink-0 text-[#D4AF37]" aria-hidden="true" />
                     <div>
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
-                        Service &amp; Valet Hours
-                      </dt>
-                      <dd className="mt-1 text-[#F8F6ED]">{CONTACT.hoursPrimary}</dd>
-                      <dd className="mt-0.5 text-xs text-[#F8F6ED]/70">{CONTACT.hoursValet}</dd>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">Private Banquets &amp; Press</dt>
+                      <dd className="mt-1 text-[#F8F6ED]">{CONTACT.email}</dd>
                     </div>
                   </div>
                 </dl>
-
-                {/* Architectural Map & Pre-Opening Site Placement Frame */}
-                <div className="mt-7 rounded-lg border border-[#D4AF37]/40 bg-[#051F17]/90 p-4">
-                  <div className="flex items-center justify-between gap-2 text-[11px] uppercase tracking-[0.16em] text-[#E8CE82]">
-                    <span>Clifton Block 4 • Marine Drive Corridor</span>
-                    <span>24.8138° N, 67.0299° E</span>
-                  </div>
-                  <p className="mt-1.5 text-xs leading-relaxed text-[#F8F6ED]/80">
-                    Official venue lines, concierge phone desk, and live Google Maps embed activate upon physical
-                    property handover.
-                  </p>
-                </div>
               </div>
 
-              {/* Right Column: Direct Concierge Inquiry Form */}
+              {/* Right Column: Inquiry Form */}
               <div className="lg:col-span-7">
-                <div className="rounded-lg border border-[#D4AF37]/45 bg-[#051F17]/95 p-6 shadow-[0_16px_44px_rgba(0,0,0,0.34)] sm:p-9">
-                  <h3 className="dk-font-display text-2xl font-semibold text-[#F8F6ED]">
-                    Direct Concierge Dispatch
-                  </h3>
-                  <p className="mt-1.5 text-xs leading-relaxed text-[#F8F6ED]/75 sm:text-sm">
-                    Arrange bespoke private banquets, corporate hospitality, home catering degs, or press visits.
-                  </p>
+                <div className="rounded-xl border border-[#D4AF37]/35 bg-[#051F17]/90 p-6 shadow-2xl sm:p-9">
+                  <div className="flex items-center justify-between border-b border-[#D4AF37]/25 pb-4">
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
+                        Executive &amp; Private Hosting
+                      </p>
+                      <h3 className="dk-font-display mt-1 text-2xl font-semibold text-[#F8F6ED]">
+                        Private Dining Inquiry
+                      </h3>
+                    </div>
+                    <UtensilsCrossed size={22} className="text-[#D4AF37]" aria-hidden="true" />
+                  </div>
 
                   {inqConfirmation && (
-                    <div
-                      role="status"
-                      aria-live="polite"
-                      className="mt-6 flex items-start gap-3 border border-[#D4AF37] bg-[#07291F] p-4 text-sm text-[#F8F6ED]"
-                    >
-                      <CheckCircle2 size={20} strokeWidth={1.6} className="mt-0.5 shrink-0 text-[#D4AF37]" aria-hidden="true" />
-                      <div>
-                        <p className="font-semibold text-[#D4AF37]">
-                          Dispatch Received — Reference {inqConfirmation.reference}
-                        </p>
-                        <p className="mt-1 text-xs text-[#F8F6ED]/85">
-                          Thank you, {inqConfirmation.name}. Our {inqConfirmation.type.toLowerCase()} director will reply
-                          to {inqConfirmation.email} within one business day.
-                        </p>
-                      </div>
+                    <div className="mt-5 rounded-lg border border-[#D4AF37] bg-[#0A3D2E] p-4 text-xs leading-relaxed text-[#F8F6ED]">
+                      <p className="font-semibold text-[#DFBE6F]">
+                        Inquiry Received (Ref: #{inqConfirmation.reference})
+                      </p>
+                      <p className="mt-1">
+                        Thank you, {inqConfirmation.name}. Our banqueting concierge will contact you within 24 hours.
+                      </p>
                     </div>
                   )}
 
-                  <form ref={inqFormRef} noValidate onSubmit={handleInquirySubmit} className="mt-6 space-y-5">
+                  <form
+                    ref={inqFormRef}
+                    noValidate
+                    onSubmit={handleInquirySubmit}
+                    className="mt-6 space-y-5"
+                  >
                     <div className="dk-visually-hidden" aria-live="polite" aria-atomic="true">
                       {inqLiveSummary}
                     </div>
 
-                    <fieldset className="border-0 p-0">
-                      <legend className="text-xs font-semibold uppercase tracking-[0.14em] text-[#D4AF37]">
-                        Inquiry Purpose <span aria-hidden="true">*</span>
-                      </legend>
-                      <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-                        {(["Private Banquet", "Bespoke Catering", "Press & Editorial"] as InquiryType[]).map((kind) => (
-                          <label key={kind} className="dk-radio-card dk-radio-card--dark">
-                            <input
-                              type="radio"
-                              name="inquiryType"
-                              value={kind}
-                              required
-                              checked={inqForm.type === kind}
-                              onChange={() => setInqForm((p) => ({ ...p, type: kind }))}
-                              className="h-4 w-4 accent-[#D4AF37]"
-                            />
-                            <span className="text-xs font-medium">{kind}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </fieldset>
+                    <div>
+                      <label htmlFor="inq-type" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#F8F6ED]">
+                        Inquiry Type
+                      </label>
+                      <select
+                        id="inq-type"
+                        name="type"
+                        value={inqForm.type}
+                        onChange={(e) => setInqForm((p) => ({ ...p, type: e.target.value as InquiryType }))}
+                        className="dk-control dk-control--dark mt-1.5"
+                      >
+                        <option value="Private Banquet">Private Banquet (Full Alcove Buyout)</option>
+                        <option value="Bespoke Catering">Bespoke Catering (Off-Site Residence)</option>
+                        <option value="Press & Editorial">Press, Editorial &amp; Commercial</option>
+                      </select>
+                    </div>
 
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                       <div>
                         <label htmlFor="inq-name" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#F8F6ED]">
                           Your Name <span aria-hidden="true" className="text-[#E5C76B]">*</span>
                         </label>
-                        <p id="inq-name-hint" className="mt-1 text-[11px] text-[#F8F6ED]/65">
-                          Full name or organization representative.
-                        </p>
                         <input
                           id="inq-name"
                           name="name"
                           type="text"
                           required
                           minLength={2}
-                          autoComplete="name"
                           value={inqForm.name}
                           onChange={(e) => setInqForm((p) => ({ ...p, name: e.target.value }))}
                           data-label="Your Name"
-                          data-base-describedby="inq-name-hint"
                           data-error-id="inq-name-error"
-                          aria-describedby="inq-name-hint"
                           aria-invalid="false"
-                          placeholder="e.g. Ayesha Siddiqui"
+                          placeholder="Dr. Asad Qureshi"
                           className="dk-control dk-control--dark mt-1.5"
                         />
                         {inqErrors.name && (
@@ -3085,21 +3599,15 @@ export default function DastarkhwanApp() {
                         <label htmlFor="inq-email" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#F8F6ED]">
                           Email Address <span aria-hidden="true" className="text-[#E5C76B]">*</span>
                         </label>
-                        <p id="inq-email-hint" className="mt-1 text-[11px] text-[#F8F6ED]/65">
-                          Direct address for formal tasting proposals.
-                        </p>
                         <input
                           id="inq-email"
                           name="email"
                           type="email"
                           required
-                          autoComplete="email"
                           value={inqForm.email}
                           onChange={(e) => setInqForm((p) => ({ ...p, email: e.target.value }))}
                           data-label="Email Address"
-                          data-base-describedby="inq-email-hint"
                           data-error-id="inq-email-error"
-                          aria-describedby="inq-email-hint"
                           aria-invalid="false"
                           placeholder="name@company.pk"
                           className="dk-control dk-control--dark mt-1.5"
@@ -3116,9 +3624,6 @@ export default function DastarkhwanApp() {
                       <label htmlFor="inq-message" className="block text-xs font-semibold uppercase tracking-[0.14em] text-[#F8F6ED]">
                         Event Details &amp; Preferred Dates <span aria-hidden="true" className="text-[#E5C76B]">*</span>
                       </label>
-                      <p id="inq-message-hint" className="mt-1 text-[11px] text-[#F8F6ED]/65">
-                        Minimum 10 characters: please share approximate guest count, dates, or menu preferences.
-                      </p>
                       <textarea
                         id="inq-message"
                         name="message"
@@ -3128,11 +3633,9 @@ export default function DastarkhwanApp() {
                         value={inqForm.message}
                         onChange={(e) => setInqForm((p) => ({ ...p, message: e.target.value }))}
                         data-label="Event Details"
-                        data-base-describedby="inq-message-hint"
                         data-error-id="inq-message-error"
-                        aria-describedby="inq-message-hint"
                         aria-invalid="false"
-                        placeholder="Describe your gathering, preferred evening, or private buyout inquiry..."
+                        placeholder="Describe your gathering, approximate party size, or dates..."
                         className="dk-control dk-control--dark mt-1.5"
                       />
                       {inqErrors.message && (
@@ -3156,12 +3659,11 @@ export default function DastarkhwanApp() {
       </main>
 
       {/* =====================================================================
-          SECTION I: LUXURY FOOTER (Deep Obsidian-Emerald matching Header)
+          SECTION J: LUXURY FOOTER
       ===================================================================== */}
       <footer className="border-t border-[#D4AF37]/40 bg-[#041912] py-16 text-[#F8F6ED]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
-            {/* Brand Column */}
             <div className="md:col-span-5">
               <DastarkhwanLogo size="md" />
               <p className="mt-5 max-w-sm text-xs leading-relaxed text-[#F8F6ED]/80">
@@ -3170,7 +3672,9 @@ export default function DastarkhwanApp() {
               </p>
               <div className="mt-6 flex items-center gap-4">
                 <a
-                  href="#concierge"
+                  href={`https://wa.me/923000000000?text=${encodeURIComponent("Assalam-o-Alaikum Dastarkhwan Concierge")}`}
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label="DASTARKHWAN Concierge WhatsApp"
                   className="inline-flex h-10 w-10 items-center justify-center rounded-sm border border-[#D4AF37]/35 text-[#D4AF37] transition hover:border-[#D4AF37] hover:bg-[#D4AF37]/10"
                 >
@@ -3186,31 +3690,27 @@ export default function DastarkhwanApp() {
               </div>
             </div>
 
-            {/* Quick Navigation */}
             <div className="md:col-span-3">
               <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Navigation</h2>
               <nav aria-label="Footer navigation" className="mt-4">
                 <ul className="space-y-2.5 text-xs text-[#E5DEC9]/90">
                   <li><a href="#home" className="transition hover:text-[#D4AF37]">Home</a></li>
                   <li><a href="#ethos" className="transition hover:text-[#D4AF37]">Our Story</a></li>
-                  <li><a href="#menu" className="transition hover:text-[#D4AF37]">Menu</a></li>
+                  <li><a href="#menu" className="transition hover:text-[#D4AF37]">Curated Menu</a></li>
                   <li><a href="#experience" className="transition hover:text-[#D4AF37]">Experience</a></li>
-                  <li><a href="#ambience" className="transition hover:text-[#D4AF37]">Gallery</a></li>
+                  <li><a href="#ambience" className="transition hover:text-[#D4AF37]">Spaces &amp; Gallery</a></li>
                   <li><a href="#reservations" className="transition hover:text-[#D4AF37]">Reservations</a></li>
                   <li><a href="#concierge" className="transition hover:text-[#D4AF37]">Contact</a></li>
                 </ul>
               </nav>
             </div>
 
-            {/* Hours & Clifton Contact */}
             <div className="md:col-span-4">
-              <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
-                Hours &amp; Address
-              </h2>
+              <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Hours &amp; Location</h2>
               <div className="mt-4 space-y-2.5 text-xs leading-relaxed text-[#E5DEC9]/90">
                 <p>{CONTACT.address}</p>
                 <p>{CONTACT.hoursPrimary}</p>
-                <p>Monday: Closed for Weekly Kitchen Prep</p>
+                <p>Monday: Closed for Kitchen Spice Roasting</p>
                 <p className="pt-1 text-[#D4AF37]">{CONTACT.phone} • {CONTACT.email}</p>
               </div>
             </div>
@@ -3219,9 +3719,6 @@ export default function DastarkhwanApp() {
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[#C6962C]/25 pt-8 text-xs text-[#E5DEC9]/75 sm:flex-row">
             <p>© {new Date().getFullYear()} DASTARKHWAN Hospitality Karachi. All rights reserved.</p>
             <div className="flex flex-wrap items-center gap-4">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#C6962C]/45 px-4 py-1.5 text-[11px] font-medium tracking-[0.1em] text-[#D4AF37]">
-                <span>Designed &amp; Engineered for Matrix Studio Portfolio</span>
-              </div>
               <a
                 href="#home"
                 className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-[#DFCFA6] transition hover:text-[#D4AF37]"
@@ -3235,10 +3732,162 @@ export default function DastarkhwanApp() {
       </footer>
 
       {/* =====================================================================
+          FLOATING VIP DOCK (Bottom-Right)
+      ===================================================================== */}
+      <div className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5">
+        {/* Ambient Sound Toggle */}
+        <button
+          type="button"
+          onClick={toggleSound}
+          aria-label={soundActive ? "Mute Courtyard soundscape" : "Play Courtyard soundscape"}
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37]/60 bg-[#052017]/95 text-[#D4AF37] shadow-xl backdrop-blur-md transition hover:scale-105 hover:border-[#DFBE6F]"
+        >
+          {soundActive ? (
+            <span className="inline-flex items-end gap-0.5 h-3.5">
+              <span className="w-0.5 bg-[#D4AF37] dk-eq-bar-1" />
+              <span className="w-0.5 bg-[#D4AF37] dk-eq-bar-2" />
+              <span className="w-0.5 bg-[#D4AF37] dk-eq-bar-3" />
+            </span>
+          ) : (
+            <Volume2 size={18} strokeWidth={1.6} aria-hidden="true" />
+          )}
+        </button>
+
+        {/* WhatsApp VIP Concierge */}
+        <a
+          href={`https://wa.me/923000000000?text=${encodeURIComponent(
+            "Assalam-o-Alaikum Dastarkhwan Concierge, I would like to inquire about reserving a table at your Clifton flagship."
+          )}`}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Chat with VIP Concierge on WhatsApp"
+          className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/70 bg-[#041A13]/95 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-[#DFBE6F] shadow-xl backdrop-blur-md transition hover:scale-105 hover:border-[#DFBE6F]"
+        >
+          <MessageCircle size={15} className="text-[#25D366]" aria-hidden="true" />
+          <span className="hidden sm:inline">VIP Concierge</span>
+        </a>
+
+        {/* Scroll To Top */}
+        {showScrollTop && (
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label="Scroll to top of page"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#D4AF37]/50 bg-[#052017]/95 text-[#D4AF37] shadow-xl backdrop-blur-md transition hover:scale-105"
+          >
+            <ArrowUp size={17} strokeWidth={1.8} aria-hidden="true" />
+          </button>
+        )}
+      </div>
+
+      {/* =====================================================================
           NATIVE ACCESSIBLE TOP-LAYER MODALS (<dialog>)
       ===================================================================== */}
 
-      {/* 1. Ambience Lightbox Modal (<dialog>) */}
+      {/* 1. Culinary Dish Craft Modal (<dialog>) */}
+      <dialog
+        ref={dishDialogRef}
+        className="dk-modal max-w-2xl"
+        closedby="any"
+        aria-labelledby="dish-modal-title"
+      >
+        {selectedDishModal && (
+          <div>
+            <div className="flex items-center justify-between border-b border-[#D4AF37]/25 px-6 py-4">
+              <div>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
+                  {selectedDishModal.categoryLabel} • Culinary Craft
+                </span>
+                <h2 id="dish-modal-title" className="dk-font-display text-2xl font-semibold text-[#F8F6ED]">
+                  {selectedDishModal.title}
+                </h2>
+              </div>
+              <button
+                type="button"
+                autoFocus
+                onClick={closeDishModal}
+                aria-label="Close dish craft modal"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-sm border border-[#D4AF37]/40 text-[#D4AF37] transition hover:bg-[#D4AF37]/15"
+              >
+                <X size={20} strokeWidth={1.6} aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12">
+              <div className="bg-[#041812] md:col-span-5">
+                <img
+                  src={selectedDishModal.image}
+                  alt={selectedDishModal.imageAlt}
+                  width={800}
+                  height={600}
+                  className="aspect-[4/3] h-full w-full object-cover md:aspect-auto"
+                />
+              </div>
+
+              <div className="flex flex-col justify-between p-6 md:col-span-7">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-2 border-b border-[#D4AF37]/20 pb-3">
+                    <span className="text-xl font-bold text-[#DFBE6F]">
+                      PKR {selectedDishModal.pricePkr.toLocaleString("en-PK")}
+                    </span>
+                    <SpiceRating level={selectedDishModal.spiceLevel} label={selectedDishModal.spiceLabel} />
+                  </div>
+
+                  <div>
+                    <h4 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
+                      Heritage Tradition
+                    </h4>
+                    <p className="mt-1 text-xs leading-relaxed text-[#F8F6ED]/90">
+                      {selectedDishModal.heritageStory}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
+                      Culinary Technique
+                    </h4>
+                    <p className="mt-1 text-xs leading-relaxed text-[#E5DEC9]/85">
+                      {selectedDishModal.cookingTechnique}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">
+                      Suggested Royal Pairing
+                    </h4>
+                    <p className="mt-1 text-xs italic text-[#DFBE6F]">
+                      {selectedDishModal.suggestedPairing}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {selectedDishModal.dietaryTags.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="rounded-full border border-[#D4AF37]/35 bg-[#052017] px-2.5 py-0.5 text-[10px] text-[#DFCFA6]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6 border-t border-[#D4AF37]/20 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => handlePreSelectDish(selectedDishModal)}
+                    className="dk-btn-gold w-full"
+                  >
+                    <span>Reserve Table &amp; Pre-Order This Dish</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </dialog>
+
+      {/* 2. Ambience Lightbox Modal (<dialog>) */}
       <dialog
         ref={lightboxDialogRef}
         className="dk-modal"
@@ -3287,7 +3936,7 @@ export default function DastarkhwanApp() {
                     {activeAmbience.description}
                   </p>
                   <p className="mt-4 border-l-2 border-[#D4AF37] pl-3 text-xs italic text-[#E5C76B]">
-                    Sensory Note: {activeAmbience.sensoryNote}
+                    Sensory Atmosphere: {activeAmbience.sensoryNote}
                   </p>
                 </div>
 
@@ -3334,7 +3983,7 @@ export default function DastarkhwanApp() {
         )}
       </dialog>
 
-      {/* 2. Reservation Confirmation Modal (<dialog>) */}
+      {/* 3. Enhanced Reservation Confirmation Modal (<dialog>) */}
       <dialog
         ref={confirmDialogRef}
         className="dk-modal max-w-lg"
@@ -3397,9 +4046,55 @@ export default function DastarkhwanApp() {
               )}
             </dl>
 
-            <div className="mt-6 border border-[#D4AF37]/30 bg-[#0B3D2E] p-4 text-xs leading-relaxed text-[#F8F6ED]/85">
-              Our Clifton hospitality concierge will dispatch your formal table confirmation via WhatsApp within 15
-              minutes.
+            {/* Quick Actions: Copy Reference, Google Calendar, WhatsApp Share */}
+            <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+              <button
+                type="button"
+                onClick={() => handleCopyCode(confirmedReservation.reference)}
+                className="inline-flex items-center justify-center gap-1.5 rounded border border-[#D4AF37]/45 bg-[#052017] py-2 text-xs font-semibold text-[#DFBE6F] transition hover:bg-[#D4AF37]/15"
+              >
+                {copiedCodeToast ? (
+                  <>
+                    <Check size={14} className="text-[#25D366]" aria-hidden="true" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={14} aria-hidden="true" />
+                    <span>Copy Ref</span>
+                  </>
+                )}
+              </button>
+
+              <a
+                href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+                  `Dinner at DASTARKHWAN Karachi (#${confirmedReservation.reference})`
+                )}&details=${encodeURIComponent(
+                  `Table reservation at DASTARKHWAN Clifton.\nReference: #${confirmedReservation.reference}\nParty: ${confirmedReservation.guests}\nTime: ${confirmedReservation.timeSlot}\nHall: ${confirmedReservation.hallPreference}`
+                )}&location=${encodeURIComponent("DASTARKHWAN, Clifton Block 4, Karachi, Pakistan")}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-1.5 rounded border border-[#D4AF37]/45 bg-[#052017] py-2 text-xs font-semibold text-[#DFBE6F] transition hover:bg-[#D4AF37]/15"
+              >
+                <Calendar size={14} aria-hidden="true" />
+                <span>Add to Cal</span>
+              </a>
+
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                  `Assalam-o-Alaikum! Our table reservation at DASTARKHWAN Karachi is registered.\n\nReference: #${confirmedReservation.reference}\nParty: ${confirmedReservation.guests}\nDate: ${confirmedReservation.date}\nTime: ${confirmedReservation.timeSlot}\nHall: ${confirmedReservation.hallPreference}\nVenue: Clifton Block 4, Karachi`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-1.5 rounded border border-[#D4AF37]/45 bg-[#052017] py-2 text-xs font-semibold text-[#DFBE6F] transition hover:bg-[#D4AF37]/15"
+              >
+                <Share2 size={14} aria-hidden="true" />
+                <span>Share via WA</span>
+              </a>
+            </div>
+
+            <div className="mt-5 border border-[#D4AF37]/30 bg-[#0B3D2E] p-4 text-xs leading-relaxed text-[#F8F6ED]/85">
+              Our Clifton hospitality concierge will dispatch your formal table confirmation via WhatsApp within 15 minutes.
             </div>
 
             <div className="mt-6">
@@ -3411,7 +4106,7 @@ export default function DastarkhwanApp() {
         )}
       </dialog>
 
-      {/* 3. Phase 3 QR Table Ordering Concierge Preview Modal (<dialog>) */}
+      {/* 4. Phase 3 QR Table Ordering Concierge Preview Modal (<dialog>) */}
       <dialog
         ref={qrDialogRef}
         className="dk-modal max-w-md"
@@ -3422,7 +4117,7 @@ export default function DastarkhwanApp() {
           <div className="flex items-start justify-between gap-4 border-b border-[#D4AF37]/25 pb-4">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
-                Phase III Table Preview
+                Tableside Service Preview
               </p>
               <h2 id="qr-preview-title" className="dk-font-display text-2xl font-semibold text-[#F8F6ED]">
                 Table 04 • Emerald Salon
